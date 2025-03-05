@@ -62,10 +62,10 @@ public class UserIOConsoleImpl implements UserIO {
 
     /**
      * Prompts user for a string until provided with one that has [minChars, maxChars] characters.
-     * @param prompt
+     * @param prompt to display to the user.
      * @param minChars should be 1 or greater
      * @param maxChars should be greater than minChars
-     * @return
+     * @return String that meets min, max requirements.
      */
     @Override
     public String readString(String prompt, int minChars, int maxChars) {

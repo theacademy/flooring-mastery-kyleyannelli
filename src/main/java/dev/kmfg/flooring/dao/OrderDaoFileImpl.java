@@ -24,8 +24,8 @@ public class OrderDaoFileImpl implements OrderDao {
     private static final String FILE_NAME = ORDERS_PATH + "/Orders_%d.txt";
     private static final String DELIMITER = ",";
     private static final int REQUIRED_PARTS = 12;
-    private static final DateTimeFormatter INT_DATE_FORMATTER = DateTimeFormatter.ofPattern("MMddyyyy");;
-    private static final DateTimeFormatter STR_DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");;
+    private static final DateTimeFormatter INT_DATE_FORMATTER = DateTimeFormatter.ofPattern("MMddyyyy");
+    private static final DateTimeFormatter STR_DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
     private HashMap<Integer, Order> orders;
 

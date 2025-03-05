@@ -71,27 +71,11 @@ public class FlooringView {
         return givenCustomerName;
     }
 
-    private BigDecimal promptBigDecimal() {
+    private BigDecimal promptArea() {
         return io.readBigDecimal(
                 "Enter a value in XXXX.XX format. It must be exactly to the hundredths place.",
                 2,
                 BigDecimal.ONE
-        );
-    }
-
-    private BigDecimal promptBigDecimal(String prompt, BigDecimal min) {
-        return io.readBigDecimal(
-                prompt + " Enter a value in XXXX.XX format. It must be exactly to the hundredths place.\n\tand at least " + min.toString(),
-                2,
-                min
-        );
-    }
-
-    private BigDecimal promptBigDecimal(BigDecimal min) {
-        return io.readBigDecimal(
-                "Enter a value in XXXX.XX format. It must be exactly to the hundredths place.\n\tand at least " + min.toString(),
-                2,
-                min
         );
     }
 
@@ -147,7 +131,7 @@ public class FlooringView {
         displayProducts(products);
         final Product pickedProduct = promptProduct(products);
 
-        final BigDecimal area = promptBigDecimal("Enter the area sqft.", ONE_HUNDRED);
+        final BigDecimal area = promptArea();
 
         return new Order()
                 .setOrderDate(givenDate)
