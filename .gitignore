@@ -4,7 +4,7 @@ target/
 !**/src/test/**/target/
 
 SampleFileData/
-Data/
+Data/Orders/
 
 
 ### IntelliJ IDEA ###
