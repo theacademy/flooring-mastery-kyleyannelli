@@ -1,8 +1,8 @@
 package dev.kmfg.flooring.view;
 
-import dev.kmfg.flooring.dto.Order;
-import dev.kmfg.flooring.dto.Product;
-import dev.kmfg.flooring.dto.StateTax;
+import dev.kmfg.flooring.model.Order;
+import dev.kmfg.flooring.model.Product;
+import dev.kmfg.flooring.model.StateTax;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

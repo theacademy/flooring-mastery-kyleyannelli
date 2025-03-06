@@ -2,7 +2,7 @@ package dev.kmfg.flooring.dao;
 
 import dev.kmfg.flooring.dao.exception.FlooringDataPersistenceException;
 import dev.kmfg.flooring.dao.exception.StateTaxNotFoundException;
-import dev.kmfg.flooring.dto.StateTax;
+import dev.kmfg.flooring.model.StateTax;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

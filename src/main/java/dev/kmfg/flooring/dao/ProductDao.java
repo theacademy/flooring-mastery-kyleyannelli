@@ -2,7 +2,7 @@ package dev.kmfg.flooring.dao;
 
 import dev.kmfg.flooring.dao.exception.FlooringDataPersistenceException;
 import dev.kmfg.flooring.dao.exception.ProductNotFoundException;
-import dev.kmfg.flooring.dto.Product;
+import dev.kmfg.flooring.model.Product;
 
 import java.util.List;
 

@@ -3,9 +3,9 @@ package dev.kmfg.flooring.service;
 import dev.kmfg.flooring.dao.exception.FlooringDataPersistenceException;
 import dev.kmfg.flooring.dao.exception.OrderNotFoundException;
 import dev.kmfg.flooring.dao.exception.StateTaxNotFoundException;
-import dev.kmfg.flooring.dto.Order;
-import dev.kmfg.flooring.dto.Product;
-import dev.kmfg.flooring.dto.StateTax;
+import dev.kmfg.flooring.model.Order;
+import dev.kmfg.flooring.model.Product;
+import dev.kmfg.flooring.model.StateTax;
 import dev.kmfg.flooring.service.exception.OrderDataValidationException;
 
 import java.time.LocalDate;

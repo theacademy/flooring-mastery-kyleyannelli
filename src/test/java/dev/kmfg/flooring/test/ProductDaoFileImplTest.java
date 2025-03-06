@@ -4,7 +4,7 @@ import dev.kmfg.flooring.dao.ProductDao;
 import dev.kmfg.flooring.dao.ProductDaoFileImpl;
 import dev.kmfg.flooring.dao.exception.FlooringDataPersistenceException;
 import dev.kmfg.flooring.dao.exception.ProductNotFoundException;
-import dev.kmfg.flooring.dto.Product;
+import dev.kmfg.flooring.model.Product;
 import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;

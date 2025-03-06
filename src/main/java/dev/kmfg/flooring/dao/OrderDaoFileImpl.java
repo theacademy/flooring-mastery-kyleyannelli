@@ -2,9 +2,9 @@ package dev.kmfg.flooring.dao;
 
 import dev.kmfg.flooring.dao.exception.FlooringDataPersistenceException;
 import dev.kmfg.flooring.dao.exception.OrderNotFoundException;
-import dev.kmfg.flooring.dto.Order;
-import dev.kmfg.flooring.dto.Product;
-import dev.kmfg.flooring.dto.StateTax;
+import dev.kmfg.flooring.model.Order;
+import dev.kmfg.flooring.model.Product;
+import dev.kmfg.flooring.model.StateTax;
 
 import java.io.*;
 import java.math.BigDecimal;

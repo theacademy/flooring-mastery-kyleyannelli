@@ -1,4 +1,4 @@
-package dev.kmfg.flooring.dto;
+package dev.kmfg.flooring.model;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

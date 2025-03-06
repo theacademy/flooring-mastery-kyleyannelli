@@ -4,7 +4,7 @@ import dev.kmfg.flooring.dao.StateTaxDao;
 import dev.kmfg.flooring.dao.StateTaxDaoFileImpl;
 import dev.kmfg.flooring.dao.exception.FlooringDataPersistenceException;
 import dev.kmfg.flooring.dao.exception.StateTaxNotFoundException;
-import dev.kmfg.flooring.dto.StateTax;
+import dev.kmfg.flooring.model.StateTax;
 import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;

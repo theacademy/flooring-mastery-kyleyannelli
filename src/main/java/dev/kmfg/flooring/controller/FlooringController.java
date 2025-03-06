@@ -3,7 +3,7 @@ package dev.kmfg.flooring.controller;
 import dev.kmfg.flooring.dao.exception.FlooringDataPersistenceException;
 import dev.kmfg.flooring.dao.exception.OrderNotFoundException;
 import dev.kmfg.flooring.dao.exception.StateTaxNotFoundException;
-import dev.kmfg.flooring.dto.Order;
+import dev.kmfg.flooring.model.Order;
 import dev.kmfg.flooring.service.FlooringServiceLayer;
 import dev.kmfg.flooring.service.exception.OrderDataValidationException;
 import dev.kmfg.flooring.view.FlooringView;

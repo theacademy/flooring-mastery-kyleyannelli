@@ -2,7 +2,7 @@ package dev.kmfg.flooring.dao;
 
 import dev.kmfg.flooring.dao.exception.FlooringDataPersistenceException;
 import dev.kmfg.flooring.dao.exception.OrderNotFoundException;
-import dev.kmfg.flooring.dto.Order;
+import dev.kmfg.flooring.model.Order;
 
 import java.time.LocalDate;
 import java.util.List;
