@@ -132,12 +132,7 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
         }
     }
 
-    /**
-     * Ensures the given order has all the required fields to allow for data persistence.
-     * @param order to validate
-     * @return the validated order
-     * @throws OrderDataValidationException if the order or any of its fields have invalid data
-     */
+    @Override
     public Order validateEntireOrder(Order order) throws OrderDataValidationException {
         validateOrderFields(order);
         validateProduct(order.getProduct());
@@ -146,18 +141,8 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
     }
 
     @Override
-    public Product getProduct(String productType) throws FlooringDataPersistenceException, ProductNotFoundException {
-        return productDao.getProduct(productType);
-    }
-
-    @Override
     public List<Product> getAllProducts() throws FlooringDataPersistenceException {
         return productDao.getAllProducts();
-    }
-
-    @Override
-    public StateTax getStateTax(String stateAbbreviation) throws FlooringDataPersistenceException, StateTaxNotFoundException {
-        return stateTaxDao.getStateTax(stateAbbreviation);
     }
 
     @Override
@@ -214,10 +199,5 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
     @Override
     public Order removeOrder(LocalDate orderDate, int orderNumber) throws FlooringDataPersistenceException, OrderNotFoundException {
         return orderDao.removeOrder(orderDate, orderNumber);
-    }
-
-    @Override
-    public int getTotalOrderCount() throws FlooringDataPersistenceException {
-        return orderDao.getAllOrders().size();
     }
 }
