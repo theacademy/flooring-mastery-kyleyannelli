@@ -43,6 +43,9 @@ public class FlooringController {
                 case EDIT_ORDER:
                     editOrder();
                     break;
+                case REMOVE_ORDER:
+                    removeOrder();
+                    break;
                 case EXIT:
                     goodbye();
                     break;
@@ -95,6 +98,14 @@ public class FlooringController {
             view.displayEditedOrderNotChanged(orderToEdit, editedOrder);
         } else if(view.displayConfirmOrderChange(orderToEdit, editedOrder)){
             service.editOrder(editedOrder);
+        }
+    }
+
+    private void removeOrder() throws FlooringDataPersistenceException, OrderNotFoundException, StateTaxNotFoundException {
+        Order orderToRemove = view.displayFindOrder();
+        orderToRemove = service.getOrder(orderToRemove.getOrderDate(), orderToRemove.getOrderNumber());
+        if(view.displayConfirmOrderRemove(orderToRemove)) {
+            service.removeOrder(orderToRemove.getOrderDate(), orderToRemove.getOrderNumber());
         }
     }
 }

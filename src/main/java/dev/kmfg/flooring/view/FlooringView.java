@@ -255,8 +255,21 @@ public class FlooringView {
         );
     }
 
+    public boolean displayConfirmOrderRemove(Order orderToRemove) {
+        displayHeader("Confirm Order Removal");
+        io.print(
+                String.format(
+                        "\n%s\n\nThis removal is permanent.",
+                        orderToRemove.toString()
+                )
+        );
+        final boolean doChange = io.readBoolean("Confirm removal of above order? (y/n)");
+        io.print(doChange ? "Order will be removed!" : "Order will not be removed.");
+        return doChange;
+    }
+
     public boolean displayConfirmOrderChange(Order originalOrder, Order editedOrder) {
-        displayHeader("Order Did Not Change");
+        displayHeader("Confirm Order Edit");
         io.print(
                 String.format(
                         "\nORIGINAL:\n\t%s\nEDITED:\n\t%s\n",
@@ -265,7 +278,7 @@ public class FlooringView {
                 )
         );
         final boolean doChange = io.readBoolean("Confirm changes? (y/n)");
-        io.print(doChange ? "Order updated!" : "Order not updated.");
+        io.print(doChange ? "Order will be updated!" : "Order will not be updated.");
         return doChange;
     }
 
