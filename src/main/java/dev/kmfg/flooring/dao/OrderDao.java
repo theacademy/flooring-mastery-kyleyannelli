@@ -15,7 +15,7 @@ public interface OrderDao {
      * @return all orders
      * @throws FlooringDataPersistenceException if the orders cannot be fetched.
      */
-    List<Order> getAllOrders() throws FlooringDataPersistenceException;
+    List<Order> getAllOrders() throws FlooringDataPersistenceException, OrderNotFoundException;
 
     /**
      * Gets all orders for specific date.
@@ -25,15 +25,16 @@ public interface OrderDao {
      * @return all orders for specific data
      * @throws FlooringDataPersistenceException if the orders cannot be fetched.
      */
-    List<Order> getAllOrders(LocalDate orderDate) throws FlooringDataPersistenceException;
+    List<Order> getAllOrders(LocalDate orderDate) throws FlooringDataPersistenceException, OrderNotFoundException;
 
     /**
      * Adds an order, if it does not already exist.
      * @param order the order to add
      * @return the added order
      * @throws FlooringDataPersistenceException if there is an issue persisting the order.
+     * @throws OrderNotFoundException if the order failed to collect after saving.
      */
-    Order addOrder(Order order) throws FlooringDataPersistenceException;
+    Order addOrder(Order order) throws FlooringDataPersistenceException, OrderNotFoundException;
 
     /**
      * Gets an order.

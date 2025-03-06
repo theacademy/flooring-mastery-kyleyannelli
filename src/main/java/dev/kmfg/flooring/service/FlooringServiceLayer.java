@@ -32,7 +32,7 @@ public interface FlooringServiceLayer {
      * @return all orders
      * @throws FlooringDataPersistenceException if the orders cannot be fetched.
      */
-    List<Order> getAllOrders() throws FlooringDataPersistenceException, StateTaxNotFoundException;
+    List<Order> getAllOrders() throws FlooringDataPersistenceException, StateTaxNotFoundException, OrderNotFoundException;
 
     /**
      * Gets all orders for specified date.
@@ -41,7 +41,7 @@ public interface FlooringServiceLayer {
      * @return all orders for the specified date.
      * @throws FlooringDataPersistenceException if the orders cannot be fetched.
      */
-    List<Order> getAllOrders(LocalDate orderDate) throws FlooringDataPersistenceException;
+    List<Order> getAllOrders(LocalDate orderDate) throws FlooringDataPersistenceException, OrderNotFoundException;
 
     /**
      * Adds an order, if it does not already exist.
@@ -50,7 +50,7 @@ public interface FlooringServiceLayer {
      * @throws FlooringDataPersistenceException if there is an issue persisting the order.
      * @throws OrderDataValidationException if the order data is invalid.
      */
-    Order addOrder(Order order) throws FlooringDataPersistenceException, OrderDataValidationException;
+    Order addOrder(Order order) throws FlooringDataPersistenceException, OrderDataValidationException, OrderNotFoundException;
 
     /**
      * Gets an order, with its fully populated StateTax.

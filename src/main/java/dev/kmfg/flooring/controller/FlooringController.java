@@ -56,10 +56,17 @@ public class FlooringController {
         } catch(FlooringDataPersistenceException | OrderDataValidationException | StateTaxNotFoundException e) {
             view.displayError(e);
         } catch(OrderNotFoundException orderNotFoundException) {
-            view.displayOrderNotFound(
-                    orderNotFoundException.getOrderDate(),
-                    orderNotFoundException.getOrderNumber()
-            );
+            final int orderNumber = orderNotFoundException.getOrderNumber();
+            if(orderNumber != -1) {
+                view.displayOrderNotFound(
+                        orderNotFoundException.getOrderDate(),
+                        orderNotFoundException.getOrderNumber()
+                );
+            } else {
+                view.displayNoOrdersForDate(
+                        orderNotFoundException.getOrderDate()
+                );
+            }
         }
 
         if(userSelection != MenuSelection.EXIT) {
@@ -73,7 +80,7 @@ public class FlooringController {
         view.displayGoodbye();
     }
 
-    private void addOrder() throws FlooringDataPersistenceException, OrderDataValidationException {
+    private void addOrder() throws FlooringDataPersistenceException, OrderDataValidationException, OrderNotFoundException {
         final Optional<Order> orderOpt = view.displayAddOrder(service.getAllProducts(), service.getAllStateTaxes());
 
         if(orderOpt.isPresent()) {
@@ -82,7 +89,7 @@ public class FlooringController {
         }
     }
 
-    private void displayOrders() throws FlooringDataPersistenceException {
+    private void displayOrders() throws FlooringDataPersistenceException, OrderNotFoundException {
         final LocalDate dateToFindOrders = view.displayFindOrders();
         final List<Order> foundOrders = service.getAllOrders(dateToFindOrders);
         view.displayFoundOrders(foundOrders, dateToFindOrders);

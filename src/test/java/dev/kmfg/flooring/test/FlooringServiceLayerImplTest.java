@@ -2,6 +2,7 @@ package dev.kmfg.flooring.test;
 
 import dev.kmfg.flooring.dao.*;
 import dev.kmfg.flooring.dao.exception.FlooringDataPersistenceException;
+import dev.kmfg.flooring.dao.exception.OrderNotFoundException;
 import dev.kmfg.flooring.dao.exception.StateTaxNotFoundException;
 import dev.kmfg.flooring.dto.Order;
 import dev.kmfg.flooring.dto.Product;
@@ -112,6 +113,8 @@ public class FlooringServiceLayerImplTest {
             fail("Failed to get all orders due to persistence exception!", e);
         } catch(StateTaxNotFoundException e) {
             fail("Failed to collect state taxes for orders!", e);
+        } catch(OrderNotFoundException e) {
+            fail("No valid order directories were found!", e);
         }
 
         assertEquals(orders.size(), 3, "Orders received does not match expected size!");

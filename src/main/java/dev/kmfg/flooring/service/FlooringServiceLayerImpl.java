@@ -151,21 +151,21 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
     }
 
     @Override
-    public List<Order> getAllOrders() throws FlooringDataPersistenceException {
+    public List<Order> getAllOrders() throws FlooringDataPersistenceException, OrderNotFoundException {
         final List<Order> foundOrders = orderDao.getAllOrders();
 
         return collectOrderStates(foundOrders);
     }
 
     @Override
-    public List<Order> getAllOrders(LocalDate orderDate) throws FlooringDataPersistenceException {
+    public List<Order> getAllOrders(LocalDate orderDate) throws FlooringDataPersistenceException, OrderNotFoundException {
         final List<Order> foundOrders = orderDao.getAllOrders(orderDate);
 
         return collectOrderStates(foundOrders);
     }
 
     @Override
-    public Order addOrder(Order order) throws FlooringDataPersistenceException, OrderDataValidationException {
+    public Order addOrder(Order order) throws FlooringDataPersistenceException, OrderDataValidationException, OrderNotFoundException {
         return orderDao.addOrder(validateEntireOrder(order));
     }
 

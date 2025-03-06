@@ -124,7 +124,7 @@ public class OrderDaoFileImpl implements OrderDao {
         );
     }
 
-    private void read(LocalDate orderDate) throws FlooringDataPersistenceException {
+    private void read(LocalDate orderDate) throws OrderNotFoundException, FlooringDataPersistenceException {
         Scanner scanner;
 
         try {
@@ -133,9 +133,8 @@ public class OrderDaoFileImpl implements OrderDao {
                             new FileReader(getFileName(orderDate))
                     )
             );
-        } catch (FileNotFoundException e) {
-            throw new FlooringDataPersistenceException(
-                    "Could not load order data into memory.", e);
+        } catch(FileNotFoundException e) {
+            throw new OrderNotFoundException("No orders exist for given date!", orderDate, -1);
         }
 
         // remove any orders with this current date
@@ -147,7 +146,7 @@ public class OrderDaoFileImpl implements OrderDao {
         if(scanner.hasNextLine()) {
             scanner.nextLine(); // consume the CSV header.
         }
-        while (scanner.hasNextLine()) {
+        while(scanner.hasNextLine()) {
             currentLine = scanner.nextLine();
             order = unmarshallOrder(currentLine, orderDate);
             orders.put(order.getOrderNumber(), order);
@@ -157,7 +156,7 @@ public class OrderDaoFileImpl implements OrderDao {
     }
 
 
-    private void readAll() throws FlooringDataPersistenceException {
+    private void readAll() throws FlooringDataPersistenceException, OrderNotFoundException {
         Path filePath = Paths.get(ordersPath);
         try {
             orders = new HashMap<>();
@@ -206,13 +205,13 @@ public class OrderDaoFileImpl implements OrderDao {
     }
 
     @Override
-    public List<Order> getAllOrders() throws FlooringDataPersistenceException {
+    public List<Order> getAllOrders() throws FlooringDataPersistenceException, OrderNotFoundException {
         readAll();
         return new ArrayList<>(orders.values());
     }
 
     @Override
-    public List<Order> getAllOrders(LocalDate orderDate) throws FlooringDataPersistenceException {
+    public List<Order> getAllOrders(LocalDate orderDate) throws FlooringDataPersistenceException, OrderNotFoundException {
         read(orderDate);
         return orders.values().stream()
                 .filter(order -> order.getOrderDate().isEqual(orderDate))
@@ -220,7 +219,7 @@ public class OrderDaoFileImpl implements OrderDao {
     }
 
     @Override
-    public Order addOrder(Order order) throws FlooringDataPersistenceException {
+    public Order addOrder(Order order) throws FlooringDataPersistenceException, OrderNotFoundException {
         readAll();
 
         order.setOrderNumber(getNextOrderNumber());

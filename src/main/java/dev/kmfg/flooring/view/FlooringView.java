@@ -351,8 +351,18 @@ public class FlooringView {
         return doChange;
     }
 
+    public void displayNoOrdersForDate(LocalDate orderDate) {
+        displayHeader("No Orders Found");
+        io.print(
+                String.format(
+                        "No orders found on %s.",
+                        orderDate.format(STR_DATE_FORMATTER)
+                )
+        );
+    }
+
     public void displayOrderNotFound(LocalDate orderDate, int orderNumber) {
-        displayHeader("Found Order");
+        displayHeader("Order Not Found");
         io.print(
                 String.format(
                         "No order found for order #%d on %s.",

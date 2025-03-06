@@ -103,6 +103,8 @@ public class OrderDaoFileImplTest {
             addedOrder = testDao.addOrder(testOrder);
         } catch(FlooringDataPersistenceException e) {
             fail("Could not add order!", e);
+        } catch (OrderNotFoundException e) {
+            fail("Order was not found after adding!", e);
         }
 
         if(addedOrder == null) {
@@ -299,6 +301,8 @@ public class OrderDaoFileImplTest {
             orders = testDao.getAllOrders();
         } catch(FlooringDataPersistenceException e) {
             fail("Could not fetch orders!", e);
+        } catch (OrderNotFoundException e) {
+            fail("Order was not found after adding!", e);
         }
 
         if(orders == null) {
