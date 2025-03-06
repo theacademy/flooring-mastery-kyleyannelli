@@ -10,8 +10,6 @@ import java.io.FileReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ProductDaoFileImpl implements ProductDao {
     private static final String DELIMITER = ",";
@@ -46,24 +44,6 @@ public class ProductDaoFileImpl implements ProductDao {
         final BigDecimal laborCostPerSqft = new BigDecimal(productParts[2]).setScale(2, RoundingMode.HALF_UP);
 
         return new Product(productType, costPerSqft, laborCostPerSqft);
-    }
-
-    private String marshallProduct(Product product) throws FlooringDataPersistenceException {
-        if(product == null) {
-            throw new FlooringDataPersistenceException("Cannot marshall a null product!");
-        } else if(product.getProductType() == null ||
-                product.getCostPerSqft() == null ||
-                product.getLaborCostPerSqft() == null) {
-            throw new FlooringDataPersistenceException("Cannot marshall a product with null parts!");
-        }
-
-        return Stream.of(
-                    product.getProductType(),
-                    product.getCostPerSqft(),
-                    product.getLaborCostPerSqft()
-                )
-                .map(Objects::toString)
-                .collect(Collectors.joining(DELIMITER));
     }
 
     private void read() throws FlooringDataPersistenceException {

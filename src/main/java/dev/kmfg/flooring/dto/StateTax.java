@@ -3,17 +3,13 @@ package dev.kmfg.flooring.dto;
 import java.math.BigDecimal;
 
 public class StateTax {
-    private String stateName, stateAbbreviation;
-    private BigDecimal taxRate;
+    private final String stateName, stateAbbreviation;
+    private final BigDecimal taxRate;
 
     public StateTax(String stateAbbreviation, String stateName, BigDecimal taxRate) {
         this.stateAbbreviation = stateAbbreviation;
         this.stateName = stateName;
         this.taxRate = taxRate;
-    }
-
-    public void setStateName(String stateName) {
-        this.stateName = stateName;
     }
 
     public BigDecimal getTaxRate() {

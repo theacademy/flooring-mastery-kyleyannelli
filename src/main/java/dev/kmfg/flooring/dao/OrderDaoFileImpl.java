@@ -21,10 +21,10 @@ import java.util.stream.Stream;
 public class OrderDaoFileImpl implements OrderDao {
     private static final String ORDERS_FILE_HEADER = "OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total";
     private static final String FILE_FORMAT = "/Orders_%02d%02d%02d.txt";
+    private static final String FILE_FORMAT_REGEX = "^Orders_\\d{2}\\d{2}\\d{4}\\.txt";
     private static final String DELIMITER = ",";
     private static final int REQUIRED_PARTS = 12;
     private static final DateTimeFormatter INT_DATE_FORMATTER = DateTimeFormatter.ofPattern("MMddyyyy");
-    private static final DateTimeFormatter STR_DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
     private final String ordersPath;
     private final String fileName;
@@ -43,7 +43,7 @@ public class OrderDaoFileImpl implements OrderDao {
         this.orders = new HashMap<>();
     }
 
-    private int getNextOrderNumber() throws FlooringDataPersistenceException {
+    private int getNextOrderNumber() {
         return orders.values().stream()
                 .mapToInt(Order::getOrderNumber)
                 .max()
@@ -93,8 +93,8 @@ public class OrderDaoFileImpl implements OrderDao {
 
     /**
      * Does not null check any fields on order. May produce NPE if not validated.
-     * @param order
-     * @return
+     * @param order the order to stringify
+     * @return the stringified order
      */
     private String marshallOrder(Order order) {
         return Stream.of(
@@ -163,11 +163,9 @@ public class OrderDaoFileImpl implements OrderDao {
             orders = new HashMap<>();
 
             for(Path path : Files.list(filePath).collect(Collectors.toList())) {
-                if(!Files.isRegularFile(path)) {
+                // if it's not a file or doesn't match the file format, skip.
+                if(!Files.isRegularFile(path) || !path.getFileName().toString().matches(FILE_FORMAT_REGEX)) {
                     continue;
-                }
-                if(path.endsWith(".txt")) {
-                    return;
                 }
                 final String fileName = path.getFileName().toString();
                 final String dateStr = fileName.substring(fileName.indexOf('_') + 1, fileName.indexOf('.'));

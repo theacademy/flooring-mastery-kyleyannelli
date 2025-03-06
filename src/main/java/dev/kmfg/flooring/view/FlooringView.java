@@ -27,7 +27,7 @@ public class FlooringView {
     /**
      * Displays the program header.
      * If title is null or blank, spacers will be added.
-     * @param title
+     * @param title the title to place in the header.
      */
     private void displayHeader(String title) {
         if(title == null || title.isBlank()) {
@@ -87,7 +87,7 @@ public class FlooringView {
         return io.readBigDecimal(
                 String.format(
                         "Enter the area sqft in XXXX.XX format. It must be exactly to the hundredths place. At least %s or greater.",
-                        ONE_HUNDRED.toString()
+                        ONE_HUNDRED
                 ),
                 2,
                 ONE_HUNDRED
@@ -108,7 +108,7 @@ public class FlooringView {
             pickedStateTax = stateTaxes.stream()
                     .filter(stateTax -> stateTax.getStateAbbreviation().equalsIgnoreCase(givenStateAbbreviation))
                     .findFirst()
-                    // doesnt exist so continue the loop
+                    // does not exist so continue the loop
                     .orElse(null);
         }
         return pickedStateTax;
@@ -135,7 +135,7 @@ public class FlooringView {
             pickedProduct = products.stream()
                     .filter(product -> product.getProductType().equalsIgnoreCase(givenProductType))
                     .findFirst()
-                    // doesnt exist so continue loop
+                    // does not exist so continue loop
                     .orElse(null);
         }
         return pickedProduct;
@@ -163,8 +163,8 @@ public class FlooringView {
     /**
      * Displays the orders found for a date.
      * Will inform the user if the list is empty or null.
-     * @param foundOrders
-     * @param ordersDate
+     * @param foundOrders to display.
+     * @param ordersDate to place in the header.
      */
     public void displayFoundOrders(List<Order> foundOrders, LocalDate ordersDate) {
         if(foundOrders == null || foundOrders.isEmpty()) {
@@ -313,7 +313,7 @@ public class FlooringView {
 
     /**
      * Displays an order with removal message.
-     * @param orderToRemove
+     * @param orderToRemove will be displayed.
      * @return true if confirmed to remove, false otherwise.
      */
     public boolean displayConfirmOrderRemove(Order orderToRemove) {
@@ -332,8 +332,8 @@ public class FlooringView {
 
     /**
      * Displays the original and edited order for comparison.
-     * @param originalOrder
-     * @param editedOrder
+     * @param originalOrder will be compared to editedOrder.
+     * @param editedOrder will be compared to originalOrder.
      * @return true if edits are confirmed, false otherwise.
      */
     public boolean displayConfirmOrderChange(Order originalOrder, Order editedOrder) {

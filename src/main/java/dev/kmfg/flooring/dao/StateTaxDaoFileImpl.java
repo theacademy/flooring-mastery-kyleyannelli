@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class StateTaxDaoFileImpl implements StateTaxDao {
     private static final String DELIMITER = ",";
@@ -25,11 +23,11 @@ public class StateTaxDaoFileImpl implements StateTaxDao {
 
     public StateTaxDaoFileImpl(String fileName) {
         this.fileName = fileName;
-        this.stateTaxes = new HashMap<String, StateTax>();
+        this.stateTaxes = new HashMap<>();
     }
 
     public StateTaxDaoFileImpl() {
-        this.stateTaxes = new HashMap<String, StateTax>();
+        this.stateTaxes = new HashMap<>();
     }
 
     private StateTax unmarshallStateTax(String productStr) throws FlooringDataPersistenceException {
@@ -49,22 +47,6 @@ public class StateTaxDaoFileImpl implements StateTaxDao {
         final BigDecimal taxRate = new BigDecimal(productParts[2]).setScale(2, RoundingMode.HALF_UP);
 
         return new StateTax(stateAbbreviation, stateName, taxRate);
-    }
-
-    private String marshallStateTax(StateTax stateTax) throws FlooringDataPersistenceException {
-        if(stateTax == null) {
-            throw new FlooringDataPersistenceException("Cannot marshall a null state tax!");
-        } else if(stateTax.getStateAbbreviation() == null ||
-                stateTax.getStateName() == null ||
-                stateTax.getTaxRate() == null) {
-            throw new FlooringDataPersistenceException("Cannot marshall a state tax with null parts!");
-        }
-
-        return Stream.of(
-                stateTax.getStateAbbreviation(),
-                stateTax.getStateName(),
-                stateTax.getTaxRate().toString()
-        ).collect(Collectors.joining(DELIMITER));
     }
 
     private void read() throws FlooringDataPersistenceException {

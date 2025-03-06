@@ -3,8 +3,8 @@ package dev.kmfg.flooring.dto;
 import java.math.BigDecimal;
 
 public class Product {
-    private String productType;
-    private BigDecimal costPerSqft, laborCostPerSqft;
+    private final String productType;
+    private final BigDecimal costPerSqft, laborCostPerSqft;
 
     public Product(String productType, BigDecimal costPerSqft, BigDecimal laborCostPerSqft) {
         this.productType = productType;

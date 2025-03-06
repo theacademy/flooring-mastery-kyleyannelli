@@ -4,7 +4,6 @@ import dev.kmfg.flooring.dao.StateTaxDao;
 import dev.kmfg.flooring.dao.StateTaxDaoFileImpl;
 import dev.kmfg.flooring.dao.exception.FlooringDataPersistenceException;
 import dev.kmfg.flooring.dao.exception.StateTaxNotFoundException;
-import dev.kmfg.flooring.dto.Product;
 import dev.kmfg.flooring.dto.StateTax;
 import org.junit.jupiter.api.*;
 
@@ -31,7 +30,7 @@ public class StateTaxDaoFileImplTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         testDao = new StateTaxDaoFileImpl(testStateTaxesFile);
     }
 

@@ -21,16 +21,6 @@ public class Order {
         orderNumber = -1;
     }
 
-    /**
-     * Create a known order to be populated later.
-     * @param orderDate
-     * @param orderNumber
-     */
-    public Order(LocalDate orderDate, int orderNumber) {
-        this.orderDate = orderDate;
-        this.orderNumber = orderNumber;
-    }
-
     public Order setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
         return this;
@@ -121,7 +111,7 @@ public class Order {
 
     /**
      * Clones an order, does NOT make deep copies of fields.
-     * @return
+     * @return the cloned order
      */
     public Order cloneOrder() {
         return new Order()

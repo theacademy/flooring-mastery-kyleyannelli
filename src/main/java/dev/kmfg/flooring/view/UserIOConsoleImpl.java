@@ -29,10 +29,19 @@ public class UserIOConsoleImpl implements UserIO {
         return readString(prompt).equalsIgnoreCase("y");
     }
 
+    /**
+     * Get an int within the requested range. The minimum will overflow if Integer.MIN_VALUE is given for min.
+     * Additionally, this will not check if you give the max as the min, and min as the max.
+     * @param prompt to show the user until a valid int is given.
+     * @param min inclusive
+     * @param max inclusive
+     * @return int within the inclusive range.
+     */
     @Override
     public int readInt(String prompt, int min, int max) {
-        int x = min == Integer.MIN_VALUE ? min : min - 1;
-        while (x < min || x > max) {
+        int x = min - 1;
+        // while x is outside the range.
+        while(x < min || x > max) {
             print(prompt);
 
             try {
@@ -99,12 +108,6 @@ public class UserIOConsoleImpl implements UserIO {
         return date;
     }
 
-    /**
-     * @param prompt
-     * @param scale
-     * @param min
-     * @return a big decimal at given scale, always rounding half up.
-     */
     @Override
     public BigDecimal readBigDecimal(String prompt, int scale, BigDecimal min) {
         String s = "";

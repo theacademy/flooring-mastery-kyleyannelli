@@ -52,7 +52,7 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
                 );
             }
 
-            order.getStateTax().setStateName(foundStateTax.getStateName());
+            order.setStateTax(foundStateTax);
         }
 
         return orders;
@@ -202,7 +202,7 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
             );
         }
 
-        foundOrder.getStateTax().setStateName(foundStateTax.getStateName());
+        foundOrder.setStateTax(foundStateTax);
         return foundOrder;
     }
 

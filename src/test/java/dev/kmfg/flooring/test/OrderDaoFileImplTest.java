@@ -110,9 +110,9 @@ public class OrderDaoFileImplTest {
         }
 
         // this covers the product and state tax objects as those are checked in equals
-        assertEquals(addedOrder, testOrder, "Despite making no changes to the order, the added order does not match the original!");
+        assertEquals(testOrder, addedOrder, "Despite making no changes to the order, the added order does not match the original!");
         final int expectedOrderNumber = 4; // there are already 3 orders
-        assertEquals(addedOrder.getOrderNumber(), expectedOrderNumber, "Order number generated does not match expected!");
+        assertEquals(expectedOrderNumber, addedOrder.getOrderNumber(), "Order number generated does not match expected!");
     }
 
     @Test
