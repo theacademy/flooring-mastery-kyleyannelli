@@ -14,11 +14,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ProductDaoFileImpl implements ProductDao {
-    private static final String FILE_NAME = "Data/Products.txt";
     private static final String DELIMITER = ",";
     private static final int REQUIRED_PARTS = 3;
 
+    private String fileName = "Data/Products.txt";
     private HashMap<String, Product> products;
+
+    public ProductDaoFileImpl(String fileName) {
+        this.fileName = fileName;
+        this.products = new HashMap<>();
+    }
 
     public ProductDaoFileImpl() {
         this.products = new HashMap<>();
@@ -67,7 +72,7 @@ public class ProductDaoFileImpl implements ProductDao {
         try {
             scanner = new Scanner(
                     new BufferedReader(
-                            new FileReader(FILE_NAME)));
+                            new FileReader(fileName)));
         } catch (FileNotFoundException e) {
             throw new FlooringDataPersistenceException(
                     "Could not load product data into memory.", e);

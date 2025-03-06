@@ -30,15 +30,6 @@ public class UserIOConsoleImpl implements UserIO {
     }
 
     @Override
-    public int readInt(String prompt) {
-        print(prompt);
-
-        final int x = userInput.nextInt();
-        userInput.nextLine();
-        return x;
-    }
-
-    @Override
     public int readInt(String prompt, int min, int max) {
         int x = min == Integer.MIN_VALUE ? min : min - 1;
         while (x < min || x > max) {
@@ -58,23 +49,6 @@ public class UserIOConsoleImpl implements UserIO {
     public String readString(String prompt) {
         print(prompt);
         return userInput.nextLine();
-    }
-
-    /**
-     * Prompts user for a string until provided with one that has [minChars, maxChars] characters.
-     * @param prompt to display to the user.
-     * @param minChars should be 1 or greater
-     * @param maxChars should be greater than minChars
-     * @return String that meets min, max requirements.
-     */
-    @Override
-    public String readString(String prompt, int minChars, int maxChars) {
-        print(prompt);
-        String s = "";
-        while(s.length() < minChars || s.length() > maxChars) {
-            s = userInput.nextLine();
-        }
-        return s;
     }
 
     @Override
@@ -125,11 +99,12 @@ public class UserIOConsoleImpl implements UserIO {
         return date;
     }
 
-    @Override
-    public BigDecimal readBigDecimal(String prompt) {
-        return null;
-    }
-
+    /**
+     * @param prompt
+     * @param scale
+     * @param min
+     * @return a big decimal at given scale, always rounding half up.
+     */
     @Override
     public BigDecimal readBigDecimal(String prompt, int scale, BigDecimal min) {
         String s = "";

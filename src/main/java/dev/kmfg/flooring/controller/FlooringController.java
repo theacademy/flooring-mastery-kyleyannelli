@@ -89,7 +89,9 @@ public class FlooringController {
     }
 
     private void editOrder() throws FlooringDataPersistenceException, OrderNotFoundException, StateTaxNotFoundException, OrderDataValidationException {
+        // get the order date and number
         Order orderToEdit = view.displayFindOrder();
+        // reassign the order with a real one
         orderToEdit = service.getOrder(orderToEdit.getOrderDate(), orderToEdit.getOrderNumber());
 
         final Order editedOrder = view.displayEditOrder(orderToEdit, service.getAllStateTaxes(), service.getAllProducts());
@@ -102,8 +104,11 @@ public class FlooringController {
     }
 
     private void removeOrder() throws FlooringDataPersistenceException, OrderNotFoundException, StateTaxNotFoundException {
+        // get the order date and number
         Order orderToRemove = view.displayFindOrder();
+        // reassign the order with a real one
         orderToRemove = service.getOrder(orderToRemove.getOrderDate(), orderToRemove.getOrderNumber());
+
         if(view.displayConfirmOrderRemove(orderToRemove)) {
             service.removeOrder(orderToRemove.getOrderDate(), orderToRemove.getOrderNumber());
         }

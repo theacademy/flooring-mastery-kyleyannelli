@@ -24,6 +24,11 @@ public class FlooringView {
         this.io = io;
     }
 
+    /**
+     * Displays the program header.
+     * If title is null or blank, spacers will be added.
+     * @param title
+     */
     private void displayHeader(String title) {
         if(title == null || title.isBlank()) {
             title = "=== ===";
@@ -56,6 +61,9 @@ public class FlooringView {
         return io.readInt("Enter the order number.", 1, Integer.MAX_VALUE);
     }
 
+    /**
+     * @return customer name validated by regex
+     */
     private String promptCustomerName() {
         String givenCustomerName = "";
 
@@ -72,6 +80,9 @@ public class FlooringView {
         return givenCustomerName;
     }
 
+    /**
+     * @return area of at least one hundred, with a scale of 2.
+     */
     private BigDecimal promptArea() {
         return io.readBigDecimal(
                 String.format(
@@ -83,13 +94,21 @@ public class FlooringView {
         );
     }
 
+    /**
+     * Prompts user to enter a valid state abbreviation.
+     * Will reprompt until one is matched.
+     * @param stateTaxes available
+     * @return selected state tax.
+     */
     private StateTax promptStateTax(List<StateTax> stateTaxes) {
         StateTax pickedStateTax = null;
         while(pickedStateTax == null) {
             final String givenStateAbbreviation = io.readString("Enter an available state abbreviation.");
+            // get the first state abbreviation which exists.
             pickedStateTax = stateTaxes.stream()
                     .filter(stateTax -> stateTax.getStateAbbreviation().equalsIgnoreCase(givenStateAbbreviation))
                     .findFirst()
+                    // doesnt exist so continue the loop
                     .orElse(null);
         }
         return pickedStateTax;
@@ -102,13 +121,21 @@ public class FlooringView {
         }
     }
 
+    /**
+     * Prompts user to enter a valid product type.
+     * Will reprompt until one is matched.
+     * @param products available
+     * @return selected product type.
+     */
     private Product promptProduct(List<Product> products) {
         Product pickedProduct = null;
         while(pickedProduct == null) {
             final String givenProductType = io.readString("Enter an available product type.");
+            // get the first product which matches the given product type.
             pickedProduct = products.stream()
                     .filter(product -> product.getProductType().equalsIgnoreCase(givenProductType))
                     .findFirst()
+                    // doesnt exist so continue loop
                     .orElse(null);
         }
         return pickedProduct;
@@ -133,8 +160,14 @@ public class FlooringView {
                 .setOrderNumber(promptOrderNumber());
     }
 
+    /**
+     * Displays the orders found for a date.
+     * Will inform the user if the list is empty or null.
+     * @param foundOrders
+     * @param ordersDate
+     */
     public void displayFoundOrders(List<Order> foundOrders, LocalDate ordersDate) {
-        if(foundOrders.isEmpty()) {
+        if(foundOrders == null || foundOrders.isEmpty()) {
             io.print(
                     String.format(
                             "No orders found for %s.",
@@ -152,6 +185,13 @@ public class FlooringView {
         }
     }
 
+    /**
+     * Sets up an order to be placed.
+     * If the user does not confirm the placement, an empty optional will be returned.
+     * @param products available
+     * @param stateTaxes available
+     * @return Optional Order
+     */
     public Optional<Order> displayAddOrder(List<Product> products, List<StateTax> stateTaxes) {
         displayHeader("");
         displayHeader("Add an Order");
@@ -175,7 +215,7 @@ public class FlooringView {
                 .setProduct(pickedProduct)
                 .setArea(area);
 
-        if(io.readBoolean(String.format("Place order %s\n(y/n)", orderToCreate.toString()))) {
+        if(io.readBoolean(String.format("Place order?\n%s\n(y/n)", orderToCreate.toString()))) {
             return Optional.of(orderToCreate);
         }
         io.print("Order not placed.");
@@ -186,6 +226,11 @@ public class FlooringView {
         io.readString("Press enter to continue...");
     }
 
+    /**
+     * Display all available MenuSelection enums.
+     * User is not able to choose NONE.
+     * @return the selected enum.
+     */
     public MenuSelection displayAndGetMenuOption() {
         final MenuSelection[] values = MenuSelection.values();
         displayHeader("Menu");
@@ -215,6 +260,14 @@ public class FlooringView {
         );
     }
 
+    /**
+     * Copies the order passed in. The copy is edited, and returned.
+     * The original passed in order remains.
+     * @param orderToEdit will not be changed.
+     * @param stateTaxes available.
+     * @param products available.
+     * @return edited order.
+     */
     public Order displayEditOrder(Order orderToEdit, List<StateTax> stateTaxes, List<Product> products) {
         displayHeader(
                 String.format(
@@ -258,6 +311,11 @@ public class FlooringView {
         );
     }
 
+    /**
+     * Displays an order with removal message.
+     * @param orderToRemove
+     * @return true if confirmed to remove, false otherwise.
+     */
     public boolean displayConfirmOrderRemove(Order orderToRemove) {
         displayHeader("Confirm Order Removal");
         io.print(
@@ -266,11 +324,18 @@ public class FlooringView {
                         orderToRemove.toString()
                 )
         );
+
         final boolean doChange = io.readBoolean("Confirm removal of above order? (y/n)");
         io.print(doChange ? "Order will be removed!" : "Order will not be removed.");
         return doChange;
     }
 
+    /**
+     * Displays the original and edited order for comparison.
+     * @param originalOrder
+     * @param editedOrder
+     * @return true if edits are confirmed, false otherwise.
+     */
     public boolean displayConfirmOrderChange(Order originalOrder, Order editedOrder) {
         displayHeader("Confirm Order Edit");
         io.print(
@@ -280,6 +345,7 @@ public class FlooringView {
                         editedOrder.toString()
                 )
         );
+
         final boolean doChange = io.readBoolean("Confirm changes? (y/n)");
         io.print(doChange ? "Order will be updated!" : "Order will not be updated.");
         return doChange;
@@ -296,29 +362,26 @@ public class FlooringView {
         );
     }
 
+    /**
+     * Displays an exception with its class name, message, and cause message if it exists.
+     * @param e the exception
+     */
     public void displayError(Exception e) {
-        String RED = "\u001B[31m";
-        String RESET = "\u001B[0m";
-
         if(e.getCause() == null) {
             io.print(
                     String.format(
-                            "%sProgram could not complete action due to %s.\n\t%s%s",
-                            RED,
+                            "Program could not complete action due to %s.\n\t%s",
                             e.getClass(),
-                            e.getMessage(),
-                            RESET
+                            e.getMessage()
                     )
             );
         } else {
             io.print(
                     String.format(
-                            "%sProgram could not complete action due to %s.\n\t%s\n\t%s%s",
-                            RED,
+                            "Program could not complete action due to %s.\n\t%s\n\t%s",
                             e.getClass(),
                             e.getMessage(),
-                            e.getCause().getMessage(),
-                            RESET
+                            e.getCause().getMessage()
                     )
             );
         }

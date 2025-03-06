@@ -17,11 +17,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class StateTaxDaoFileImpl implements StateTaxDao {
-    private static final String FILE_NAME = "Data/Taxes.txt";
     private static final String DELIMITER = ",";
     private static final int REQUIRED_PARTS = 3;
 
+    private String fileName = "Data/Taxes.txt";
     private HashMap<String, StateTax> stateTaxes;
+
+    public StateTaxDaoFileImpl(String fileName) {
+        this.fileName = fileName;
+        this.stateTaxes = new HashMap<String, StateTax>();
+    }
 
     public StateTaxDaoFileImpl() {
         this.stateTaxes = new HashMap<String, StateTax>();
@@ -68,7 +73,7 @@ public class StateTaxDaoFileImpl implements StateTaxDao {
         try {
             scanner = new Scanner(
                     new BufferedReader(
-                            new FileReader(FILE_NAME)));
+                            new FileReader(fileName)));
         } catch (FileNotFoundException e) {
             throw new FlooringDataPersistenceException(
                     "Could not load state tax data into memory.", e);

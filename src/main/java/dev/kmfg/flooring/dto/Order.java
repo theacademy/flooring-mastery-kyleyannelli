@@ -14,10 +14,18 @@ public class Order {
     private StateTax stateTax;
     private Product product;
 
+    /**
+     * Create an empty order.
+     */
     public Order() {
         orderNumber = -1;
     }
 
+    /**
+     * Create a known order to be populated later.
+     * @param orderDate
+     * @param orderNumber
+     */
     public Order(LocalDate orderDate, int orderNumber) {
         this.orderDate = orderDate;
         this.orderNumber = orderNumber;
@@ -77,24 +85,44 @@ public class Order {
         return product;
     }
 
+    /**
+     * Calculated from the area, and cost per sqft.
+     * @return material cost, with a scale of 2, rounding half up.
+     */
     public BigDecimal getMaterialCost() {
         return area.multiply(product.getCostPerSqft()).setScale(2, RoundingMode.HALF_UP);
     }
 
+    /**
+     * Calculated from the area, and labor cost per sqft.
+     * @return labor cost, with a scale of 2, rounding half up.
+     */
     public BigDecimal getLaborCost() {
         return area.multiply(product.getLaborCostPerSqft()).setScale(2, RoundingMode.HALF_UP);
     }
 
+    /**
+     * Calculated from the material cost, and labor cost.
+     * @return tax, with a scale of 2, rounding half up.
+     */
     public BigDecimal getTax() {
         final BigDecimal materialPlusLabor = getMaterialCost().add(getLaborCost());
         final BigDecimal taxRateAsFraction = stateTax.getTaxRate().divide(ONE_HUNDRED, RoundingMode.HALF_UP);
         return materialPlusLabor.multiply(taxRateAsFraction).setScale(2, RoundingMode.HALF_UP);
     }
 
+    /**
+     * Calculated from the material cost, labor cost, and tax.
+     * @return total including tax, with a scale of 2, rounding half up.
+     */
     public BigDecimal getTotal() {
         return getMaterialCost().add(getLaborCost()).add(getTax()).setScale(2, RoundingMode.HALF_UP);
     }
 
+    /**
+     * Clones an order, does NOT make deep copies of fields.
+     * @return
+     */
     public Order cloneOrder() {
         return new Order()
                 .setOrderNumber(orderNumber)

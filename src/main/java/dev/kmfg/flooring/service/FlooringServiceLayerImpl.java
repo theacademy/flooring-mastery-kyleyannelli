@@ -77,6 +77,17 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
         } else if(product.getLaborCostPerSqft() == null || BigDecimal.ZERO.compareTo(product.getLaborCostPerSqft()) > 0) {
             throw new OrderDataValidationException("Validation failed for order because its product has a labor cost per sqft of 0 or less.");
         }
+
+        try {
+            if(!productDao.getProduct(product.getProductType())
+                    .equals(product)) {
+                throw new OrderDataValidationException("Validation failed because the product exists, but the data does not match the dao.");
+            }
+        } catch(FlooringDataPersistenceException e) {
+            throw new OrderDataValidationException("Validation failed because the product could not be checked for existence.");
+        } catch(ProductNotFoundException e) {
+            throw new OrderDataValidationException("Validation failed for order because its product does not exist via the dao.");
+        }
     }
 
     private void validateStateTax(StateTax stateTax) throws OrderDataValidationException {
@@ -88,6 +99,17 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
             throw new OrderDataValidationException("Validation failed for order because its state tax does not have a state abbreviation.");
         } else if(stateTax.getTaxRate() == null || BigDecimal.ZERO.compareTo(stateTax.getTaxRate()) > 0) {
             throw new OrderDataValidationException("Validation failed for order because its state tax has a tax rate of 0 or less.");
+        }
+
+        try {
+            if(!stateTaxDao.getStateTax(stateTax.getStateAbbreviation())
+                    .equals(stateTax)) {
+                throw new OrderDataValidationException("Validation failed because the state tax exists, but the data does not match the dao.");
+            }
+        } catch(FlooringDataPersistenceException e) {
+            throw new OrderDataValidationException("Validation failed because the state tax could not be checked for existence.");
+        } catch(StateTaxNotFoundException e) {
+            throw new OrderDataValidationException("Validation failed for order because its state tax does not exist via the dao.");
         }
     }
 

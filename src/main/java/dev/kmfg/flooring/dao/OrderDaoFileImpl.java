@@ -20,16 +20,26 @@ import java.util.stream.Stream;
 
 public class OrderDaoFileImpl implements OrderDao {
     private static final String ORDERS_FILE_HEADER = "OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total";
-    private static final String ORDERS_PATH = "Data/Orders";
-    private static final String FILE_NAME = ORDERS_PATH + "/Orders_%02d%02d%02d.txt";
+    private static final String FILE_FORMAT = "/Orders_%02d%02d%02d.txt";
     private static final String DELIMITER = ",";
     private static final int REQUIRED_PARTS = 12;
     private static final DateTimeFormatter INT_DATE_FORMATTER = DateTimeFormatter.ofPattern("MMddyyyy");
     private static final DateTimeFormatter STR_DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
+    private final String ordersPath;
+    private final String fileName;
+
     private HashMap<Integer, Order> orders;
 
+    public OrderDaoFileImpl(String ordersPath) {
+        this.ordersPath = ordersPath;
+        this.fileName = ordersPath + FILE_FORMAT;
+        this.orders = new HashMap<>();
+    }
+
     public OrderDaoFileImpl() {
+        this.ordersPath = "Data/Orders";
+        this.fileName = ordersPath + FILE_FORMAT;
         this.orders = new HashMap<>();
     }
 
@@ -107,7 +117,7 @@ public class OrderDaoFileImpl implements OrderDao {
 
     private String getFileName(LocalDate orderDate) {
         return String.format(
-                FILE_NAME,
+                fileName,
                 orderDate.getMonthValue(),
                 orderDate.getDayOfMonth(),
                 orderDate.getYear()
@@ -148,7 +158,7 @@ public class OrderDaoFileImpl implements OrderDao {
 
 
     private void readAll() throws FlooringDataPersistenceException {
-        Path filePath = Paths.get(ORDERS_PATH);
+        Path filePath = Paths.get(ordersPath);
         try {
             orders = new HashMap<>();
 
@@ -221,12 +231,11 @@ public class OrderDaoFileImpl implements OrderDao {
             throw new FlooringDataPersistenceException("Cannot add an order that already exists!");
         }
 
-        // put if absent is slightly redundant, but enforces intended behavior.
-        final Order addedOrder = orders.putIfAbsent(order.getOrderNumber(), order);
+        orders.put(order.getOrderNumber(), order);
         write(order.getOrderDate());
         read(order.getOrderDate());
 
-        return addedOrder;
+        return order;
     }
 
     @Override
@@ -260,11 +269,10 @@ public class OrderDaoFileImpl implements OrderDao {
             );
         }
 
-        final Order editedOrder = orders.put(order.getOrderNumber(), order);
+        orders.put(order.getOrderNumber(), order);
+        write(order.getOrderDate());
 
-        write(editedOrder.getOrderDate());
-
-        return editedOrder;
+        return order;
     }
 
     @Override

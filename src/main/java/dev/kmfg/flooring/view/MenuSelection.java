@@ -10,17 +10,12 @@ public enum MenuSelection {
     ADD_ORDER(3),
     EDIT_ORDER(4),
     REMOVE_ORDER(5),
-    EXPORT_ALL_DATA(6),
     ;
 
     private final int value;
 
     MenuSelection(final int value) {
         this.value = value;
-    }
-
-    public int getValue() {
-        return value;
     }
 
     public String getNiceName() {
