@@ -14,7 +14,7 @@ import java.util.Optional;
 public class FlooringView {
     private static final int MIN_CUSTOMER_NAME_CHARS = 1;
     private static final int MAX_CUSTOMER_NAME_CHARS = 100;
-    private static final String VALID_CUSTOMER_NAME_PATTERN = String.format("^[a-zA-Z0-9., ]{%d,%d}$", MIN_CUSTOMER_NAME_CHARS, MAX_CUSTOMER_NAME_CHARS);
+    private static final String VALID_CUSTOMER_NAME_REGEX = String.format("^[a-zA-Z0-9., ]{%d,%d}$", MIN_CUSTOMER_NAME_CHARS, MAX_CUSTOMER_NAME_CHARS);
     private static final BigDecimal ONE_HUNDRED = new BigDecimal(100).setScale(2, RoundingMode.HALF_UP);
     private static final DateTimeFormatter STR_DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
@@ -67,7 +67,7 @@ public class FlooringView {
     private String promptCustomerName() {
         String givenCustomerName = "";
 
-        while(!givenCustomerName.matches(VALID_CUSTOMER_NAME_PATTERN)) {
+        while(!givenCustomerName.matches(VALID_CUSTOMER_NAME_REGEX)) {
             givenCustomerName = io.readString(
                     String.format(
                             "Provide a customer name. It must be [%d, %d] characters. It can only contain a-Z, 0-9, period, or comma characters.",
