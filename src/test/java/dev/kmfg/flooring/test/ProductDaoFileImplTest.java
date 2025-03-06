@@ -56,6 +56,12 @@ public class ProductDaoFileImplTest {
     }
 
     @Test
+    public void testGetUnknownProductType() {
+        final String unknownProductType = "Not Real";
+        assertThrowsExactly(ProductNotFoundException.class, () -> testDao.getProduct(unknownProductType));
+    }
+
+    @Test
     public void testGetKnownProductType() {
         final String knownProductType = "Tile";
 

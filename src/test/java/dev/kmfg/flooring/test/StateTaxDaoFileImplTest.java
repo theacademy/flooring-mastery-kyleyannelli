@@ -56,6 +56,12 @@ public class StateTaxDaoFileImplTest {
     }
 
     @Test
+    public void testGetUnknownStateAbbreviation() {
+        final String knownStateAbbreviation = "NR";
+        assertThrowsExactly(StateTaxNotFoundException.class, () -> testDao.getStateTax(knownStateAbbreviation));
+    }
+
+    @Test
     public void testGetKnownStateAbbreviation() {
         final String knownStateAbbreviation = "KY";
 
