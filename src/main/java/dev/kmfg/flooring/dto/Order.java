@@ -94,6 +94,16 @@ public class Order {
         return getMaterialCost().add(getLaborCost()).add(getTax()).setScale(2, RoundingMode.HALF_UP);
     }
 
+    public Order cloneOrder() {
+        return new Order()
+                .setOrderNumber(orderNumber)
+                .setCustomerName(customerName)
+                .setArea(area)
+                .setOrderDate(orderDate)
+                .setProduct(product)
+                .setStateTax(stateTax);
+    }
+
     /**
      * Provides the order with its state tax and product.
      * @return String
@@ -103,7 +113,7 @@ public class Order {
         final boolean haveAreaAndProduct = area != null && product != null;
         final boolean haveAreaProductStateTax = haveAreaAndProduct && stateTax != null;
 
-        return String.format("Order #%d for %s | Area: %s\n\tState Tax: %s\n\tProduct: %s\n\tMaterial: $%s | Labor: $%s | Tax: $%s | Total: $%s",
+        return String.format("Order #%d for %s\n\tArea: %s sqft\n\tState Tax: %s\n\tProduct: %s\n\tMaterial: $%s | Labor: $%s | Tax: $%s | Total: $%s",
                 orderNumber,
                 customerName != null ? customerName : "N/A",
                 area != null ? area.toString() : "N/A",
@@ -172,6 +182,6 @@ public class Order {
         if(product == null) {
             return otherOrder.product == null;
         }
-        return !product.equals(otherOrder.product);
+        return product.equals(otherOrder.product);
     }
 }

@@ -139,7 +139,7 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
     }
 
     @Override
-    public List<StateTax> getAlLStateTaxes() throws FlooringDataPersistenceException {
+    public List<StateTax> getAllStateTaxes() throws FlooringDataPersistenceException {
         return stateTaxDao.getAllStateTaxes();
     }
 
@@ -169,7 +169,7 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
         // The order file does not save the state name, only abbreviation, so we need to get the state to populate the field in order.
         StateTax foundStateTax;
         try {
-            foundStateTax = stateTaxDao.getStateTax(foundOrder.getStateTax().toString());
+            foundStateTax = stateTaxDao.getStateTax(foundOrder.getStateTax().getStateAbbreviation());
         } catch (StateTaxNotFoundException e) {
             throw new FlooringDataPersistenceException(
                     String.format(

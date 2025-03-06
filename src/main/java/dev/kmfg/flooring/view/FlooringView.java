@@ -6,9 +6,11 @@ import dev.kmfg.flooring.dto.StateTax;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Watchable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 public class FlooringView {
     private static final int MIN_CUSTOMER_NAME_CHARS = 1;
@@ -21,9 +23,7 @@ public class FlooringView {
 
     public FlooringView(UserIO io) {
         this.io = io;
-    }
-
-    private void displayHeader(String title) {
+    } private void displayHeader(String title) {
         if(title == null || title.isBlank()) {
             title = "=== ===";
         }
@@ -48,7 +48,7 @@ public class FlooringView {
     }
 
     private LocalDate promptOrderDate() {
-        return io.readLocalDate("Enter a date in MM/DD/YYYY format.");
+        return io.readLocalDate("Enter a date in MM/DD/YYYY format.", STR_DATE_FORMATTER);
     }
 
     private int promptOrderNumber() {
@@ -73,7 +73,7 @@ public class FlooringView {
 
     private BigDecimal promptArea() {
         return io.readBigDecimal(
-                "Enter a value in XXXX.XX format. It must be exactly to the hundredths place.",
+                "Enter the area sqft in XXXX.XX format. It must be exactly to the hundredths place.",
                 2,
                 BigDecimal.ONE
         );
@@ -117,7 +117,32 @@ public class FlooringView {
         }
     }
 
-    public Order displayAddOrder(List<Product> products, List<StateTax> stateTaxes) {
+    public LocalDate displayFindOrders() {
+        displayHeader("Find Orders");
+        return promptOrderDate();
+    }
+
+    public Order displayFindOrder() {
+        displayHeader("Find Specific Order");
+        return new Order()
+                .setOrderDate(promptOrderDate())
+                .setOrderNumber(promptOrderNumber());
+    }
+
+    public void displayFoundOrders(List<Order> foundOrders, LocalDate ordersDate) {
+        if(foundOrders.isEmpty()) {
+            io.print(
+                    String.format(
+                            "No orders found for %s.",
+                            ordersDate.format(STR_DATE_FORMATTER)
+                    )
+            );
+        } else {
+            foundOrders.forEach(System.out::println);
+        }
+    }
+
+    public Optional<Order> displayAddOrder(List<Product> products, List<StateTax> stateTaxes) {
         displayHeader("");
         displayHeader("Add an Order");
         displayHeader("");
@@ -133,12 +158,18 @@ public class FlooringView {
 
         final BigDecimal area = promptArea();
 
-        return new Order()
+        final Order orderToCreate = new Order()
                 .setOrderDate(givenDate)
                 .setCustomerName(givenCustomerName)
                 .setStateTax(pickedStateTax)
                 .setProduct(pickedProduct)
                 .setArea(area);
+
+        if(io.readBoolean(String.format("Place order %s\n(y/n)", orderToCreate.toString()))) {
+            return Optional.of(orderToCreate);
+        }
+        io.print("Order not placed.");
+        return Optional.empty();
     }
 
     public void displayPressEnterToContinue() {
@@ -160,7 +191,7 @@ public class FlooringView {
         io.print(
                 String.format(
                         "%s is not implemented in this program.",
-                        selection.name()
+                        selection.getNiceName()
                 )
         );
     }
@@ -174,14 +205,105 @@ public class FlooringView {
         );
     }
 
-    public void displayError(Exception e) {
-        io.print(
+    public Order displayEditOrder(Order orderToEdit, List<StateTax> stateTaxes, List<Product> products) {
+        displayHeader(
                 String.format(
-                        "Program could not complete action due to %s.\n\t%s",
-                        e.getClass(),
-                        e.getMessage()
+                        "Editing Order #%d %s",
+                        orderToEdit.getOrderNumber(),
+                        orderToEdit.getOrderDate().format(STR_DATE_FORMATTER)
                 )
         );
+
+        final Order editedOrder = orderToEdit.cloneOrder();
+
+        if(io.readBoolean("The current customer name is " + editedOrder.getCustomerName() + "\nWould you like to change it? (y/n)")) {
+            editedOrder.setCustomerName(promptCustomerName());
+        }
+
+        if(io.readBoolean("The current state tax is " + editedOrder.getStateTax().toString() + "\nWould you like to change it? (y/n)")) {
+            displayStateTaxes(stateTaxes);
+            editedOrder.setStateTax(promptStateTax(stateTaxes));
+        }
+
+        if(io.readBoolean("The current product is " + editedOrder.getProduct().toString() + "\nWould you like to change it? (y/n)")) {
+            displayProducts(products);
+            editedOrder.setProduct(promptProduct(products));
+        }
+
+        if(io.readBoolean("The current area is " + editedOrder.getArea().toString() + " sqft.\nWould you like to change it? (y/n)")) {
+            editedOrder.setArea(promptArea());
+        }
+
+        return editedOrder;
+    }
+
+    public void displayEditedOrderNotChanged(Order originalOrder, Order editedOrder) {
+        displayHeader("Order Did Not Change");
+        io.print(
+                String.format(
+                        "The order \nORIGINAL:\n\t%s\nEDITED:\n\t%s\nare identical. Therefore no changes have been made.",
+                        originalOrder.toString(),
+                        editedOrder.toString()
+                )
+        );
+    }
+
+    public boolean displayConfirmOrderChange(Order originalOrder, Order editedOrder) {
+        displayHeader("Order Did Not Change");
+        io.print(
+                String.format(
+                        "\nORIGINAL:\n\t%s\nEDITED:\n\t%s\n",
+                        originalOrder.toString(),
+                        editedOrder.toString()
+                )
+        );
+        final boolean doChange = io.readBoolean("Confirm changes? (y/n)");
+        io.print(doChange ? "Order updated!" : "Order not updated.");
+        return doChange;
+    }
+
+    public void displayOrderNotFound(LocalDate orderDate, int orderNumber) {
+        displayHeader("Found Order");
+        io.print(
+                String.format(
+                        "No order found for order #%d on %s.",
+                        orderNumber,
+                        orderDate.format(STR_DATE_FORMATTER)
+                )
+        );
+    }
+
+    public void displayOrderFound(Order foundOrder) {
+        displayHeader("Found Order");
+        io.print(foundOrder.toString());
+    }
+
+    public void displayError(Exception e) {
+        String RED = "\u001B[31m";
+        String RESET = "\u001B[0m";
+
+        if(e.getCause() == null) {
+            io.print(
+                    String.format(
+                            "%sProgram could not complete action due to %s.\n\t%s%s",
+                            RED,
+                            e.getClass(),
+                            e.getMessage(),
+                            RESET
+                    )
+            );
+        } else {
+            io.print(
+                    String.format(
+                            "%sProgram could not complete action due to %s.\n\t%s\n\t%s%s",
+                            RED,
+                            e.getClass(),
+                            e.getMessage(),
+                            e.getCause().getMessage(),
+                            RESET
+                    )
+            );
+        }
     }
 
     public void displayGoodbye() {

@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 public class OrderDaoFileImpl implements OrderDao {
     private static final String ORDERS_FILE_HEADER = "OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total";
     private static final String ORDERS_PATH = "Data/Orders";
-    private static final String FILE_NAME = ORDERS_PATH + "/Orders_%d.txt";
+    private static final String FILE_NAME = ORDERS_PATH + "/Orders_%02d%02d%02d.txt";
     private static final String DELIMITER = ",";
     private static final int REQUIRED_PARTS = 12;
     private static final DateTimeFormatter INT_DATE_FORMATTER = DateTimeFormatter.ofPattern("MMddyyyy");
@@ -31,6 +31,13 @@ public class OrderDaoFileImpl implements OrderDao {
 
     public OrderDaoFileImpl() {
         this.orders = new HashMap<>();
+    }
+
+    private int getNextOrderNumber() throws FlooringDataPersistenceException {
+        return orders.values().stream()
+                .mapToInt(Order::getOrderNumber)
+                .max()
+                .orElse(0) + 1;
     }
 
     private Order unmarshallOrder(String orderStr, LocalDate orderDate) throws FlooringDataPersistenceException {
@@ -48,7 +55,7 @@ public class OrderDaoFileImpl implements OrderDao {
         //  MaterialCost, LaborCost, Tax, Total are ignored as these are calculated values
         try {
             final int orderNumber = Integer.parseInt(orderParts[0]);
-            final String customerName = orderParts[1];
+            final String customerName = orderParts[1].replace('#', ',');
             final String stateAbbreviation = orderParts[2];
             final BigDecimal taxRate = new BigDecimal(orderParts[3]).setScale(2, RoundingMode.HALF_UP);
             final String productType = orderParts[4];
@@ -66,10 +73,10 @@ public class OrderDaoFileImpl implements OrderDao {
                     .setArea(area)
                     .setStateTax(stateTax)
                     .setProduct(product);
-        } catch (NumberFormatException nfe) {
+        } catch (NumberFormatException e) {
             throw new FlooringDataPersistenceException(
                     "Malformed data while unmarshalling order.",
-                    nfe
+                    e
             );
         }
     }
@@ -82,7 +89,7 @@ public class OrderDaoFileImpl implements OrderDao {
     private String marshallOrder(Order order) {
         return Stream.of(
                         order.getOrderNumber(),
-                        order.getCustomerName(),
+                        order.getCustomerName().replace(',', '#'),
                         order.getStateTax().getStateAbbreviation(),
                         order.getStateTax().getTaxRate(),
                         order.getProduct().getProductType(),
@@ -99,11 +106,11 @@ public class OrderDaoFileImpl implements OrderDao {
     }
 
     private String getFileName(LocalDate orderDate) {
-        String formattedDate = orderDate.format(INT_DATE_FORMATTER);
-        int dateAsInt = Integer.parseInt(formattedDate);
         return String.format(
                 FILE_NAME,
-                dateAsInt
+                orderDate.getMonthValue(),
+                orderDate.getDayOfMonth(),
+                orderDate.getYear()
         );
     }
 
@@ -206,6 +213,10 @@ public class OrderDaoFileImpl implements OrderDao {
 
     @Override
     public Order addOrder(Order order) throws FlooringDataPersistenceException {
+        readAll();
+
+        order.setOrderNumber(getNextOrderNumber());
+
         if(orders.containsKey(order.getOrderNumber())) {
             throw new FlooringDataPersistenceException("Cannot add an order that already exists!");
         }
@@ -225,11 +236,15 @@ public class OrderDaoFileImpl implements OrderDao {
         if(orders.containsKey(orderNumber)) {
             return orders.get(orderNumber);
         } else {
-            throw new OrderNotFoundException(String.format(
-                    "No order found for %s with id %d",
+            throw new OrderNotFoundException(
+                    String.format(
+                            "No order found for %s with id %d",
+                            orderDate,
+                            orderNumber
+                    ),
                     orderDate,
                     orderNumber
-            ));
+            );
         }
     }
 
@@ -238,7 +253,11 @@ public class OrderDaoFileImpl implements OrderDao {
         read(order.getOrderDate());
 
         if(!orders.containsKey(order.getOrderNumber())) {
-            throw new OrderNotFoundException("Cannot edit an order that does not exist!");
+            throw new OrderNotFoundException(
+                    "Cannot edit an order that does not exist!",
+                    order.getOrderDate(),
+                    order.getOrderNumber()
+            );
         }
 
         final Order editedOrder = orders.put(order.getOrderNumber(), order);
@@ -258,7 +277,9 @@ public class OrderDaoFileImpl implements OrderDao {
                     String.format(
                             "Could not find order #%d to remove.",
                             orderNumber
-                    )
+                    ),
+                    orderDate,
+                    orderNumber
             );
         }
 

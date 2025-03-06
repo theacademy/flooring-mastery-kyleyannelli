@@ -11,7 +11,7 @@ public interface UserIO {
     int readInt(String prompt, int min, int max);
     String readString(String prompt);
     String readString(String prompt, int minChars, int maxChars);
-    LocalDate readLocalDate(String prompt);
+    LocalDate readLocalDate(String prompt, DateTimeFormatter formatter);
     LocalDate readLocalDate(String prompt, LocalDate min, DateTimeFormatter formatter);
     BigDecimal readBigDecimal(String prompt);
     BigDecimal readBigDecimal(String prompt, int scale, BigDecimal min);

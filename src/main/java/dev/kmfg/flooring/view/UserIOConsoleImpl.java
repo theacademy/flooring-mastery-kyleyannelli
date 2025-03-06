@@ -78,8 +78,22 @@ public class UserIOConsoleImpl implements UserIO {
     }
 
     @Override
-    public LocalDate readLocalDate(String prompt) {
-        return null;
+    public LocalDate readLocalDate(String prompt, DateTimeFormatter formatter) {
+        Scanner scanner = new Scanner(System.in);
+        LocalDate date = null;
+
+        while(date == null) {
+            print(prompt);
+            String input = scanner.nextLine().trim();
+
+            try {
+                date = LocalDate.parse(input, formatter);
+            } catch(DateTimeParseException e) {
+                print("Invalid date format. Please use MM/DD/YYYY format.");
+            }
+        }
+
+        return date;
     }
 
     @Override
@@ -127,6 +141,7 @@ public class UserIOConsoleImpl implements UserIO {
                 MAXIMUM_BIG_DECIMAL_DIGITS,
                 scale
         );
+
         boolean givenBigDecimalMeetsMin = false;
         while(!s.matches(regex) || !givenBigDecimalMeetsMin) {
             print(prompt);

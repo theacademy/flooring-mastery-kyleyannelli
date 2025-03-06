@@ -16,7 +16,7 @@ public interface FlooringServiceLayer {
     public Product getProduct(String productType) throws FlooringDataPersistenceException, ProductNotFoundException;
     public List<Product> getAllProducts() throws FlooringDataPersistenceException;
     public StateTax getStateTax(String stateAbbreviation) throws FlooringDataPersistenceException, StateTaxNotFoundException;
-    public List<StateTax> getAlLStateTaxes() throws FlooringDataPersistenceException;
+    public List<StateTax> getAllStateTaxes() throws FlooringDataPersistenceException;
     public List<Order> getAllOrders() throws FlooringDataPersistenceException, StateTaxNotFoundException;
     public List<Order> getAllOrders(LocalDate orderDate) throws FlooringDataPersistenceException;
     public Order addOrder(Order order) throws FlooringDataPersistenceException, OrderDataValidationException;
