@@ -6,7 +6,6 @@ import dev.kmfg.flooring.dto.StateTax;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.file.Watchable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -23,7 +22,9 @@ public class FlooringView {
 
     public FlooringView(UserIO io) {
         this.io = io;
-    } private void displayHeader(String title) {
+    }
+
+    private void displayHeader(String title) {
         if(title == null || title.isBlank()) {
             title = "=== ===";
         }
@@ -138,6 +139,12 @@ public class FlooringView {
                     )
             );
         } else {
+            io.print(
+                    String.format(
+                            "Orders found for %s.",
+                            ordersDate.format(STR_DATE_FORMATTER)
+                    )
+            );
             foundOrders.forEach(System.out::println);
         }
     }
