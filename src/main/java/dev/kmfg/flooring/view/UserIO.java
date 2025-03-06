@@ -18,7 +18,7 @@ public interface UserIO {
      * @param prompt to show the user until a valid int is given.
      * @param min inclusive
      * @param max inclusive
-     * @return
+     * @return int in range
      */
     int readInt(String prompt, int min, int max);
 
