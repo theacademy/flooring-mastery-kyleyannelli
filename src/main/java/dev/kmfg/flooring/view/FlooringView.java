@@ -74,9 +74,12 @@ public class FlooringView {
 
     private BigDecimal promptArea() {
         return io.readBigDecimal(
-                "Enter the area sqft in XXXX.XX format. It must be exactly to the hundredths place.",
+                String.format(
+                        "Enter the area sqft in XXXX.XX format. It must be exactly to the hundredths place. At least %s or greater.",
+                        ONE_HUNDRED.toString()
+                ),
                 2,
-                BigDecimal.ONE
+                ONE_HUNDRED
         );
     }
 
@@ -291,11 +294,6 @@ public class FlooringView {
                         orderDate.format(STR_DATE_FORMATTER)
                 )
         );
-    }
-
-    public void displayOrderFound(Order foundOrder) {
-        displayHeader("Found Order");
-        io.print(foundOrder.toString());
     }
 
     public void displayError(Exception e) {

@@ -15,6 +15,7 @@ public class Order {
     private Product product;
 
     public Order() {
+        orderNumber = -1;
     }
 
     public Order(LocalDate orderDate, int orderNumber) {
@@ -105,7 +106,7 @@ public class Order {
     }
 
     /**
-     * Provides the order with its state tax and product.
+     * Provides the order with its state tax, product, area, and totals.
      * @return String
      */
     @Override
@@ -113,17 +114,34 @@ public class Order {
         final boolean haveAreaAndProduct = area != null && product != null;
         final boolean haveAreaProductStateTax = haveAreaAndProduct && stateTax != null;
 
-        return String.format("Order #%d for %s\n\tArea: %s sqft\n\tState Tax: %s\n\tProduct: %s\n\tMaterial: $%s | Labor: $%s | Tax: $%s | Total: $%s",
-                orderNumber,
-                customerName != null ? customerName : "N/A",
-                area != null ? area.toString() : "N/A",
-                stateTax != null ? stateTax.toString() : "N/A",
-                product != null ? product.toString() : "N/A",
-                haveAreaAndProduct ? getMaterialCost().toString() : "N/A",
-                haveAreaAndProduct ? getLaborCost().toString() : "N/A",
-                haveAreaProductStateTax ? getTax() : "N/A",
-                haveAreaProductStateTax ? getTotal() : "N/A"
-        );
+        String formatStr = " for %s\n\tArea: %s sqft\n\tState Tax: %s\n\tProduct: %s\n\tMaterial: $%s | Labor: $%s | Tax: $%s | Total: $%s";
+
+        if(orderNumber == -1) {
+            formatStr = "Order" + formatStr;
+            return String.format(formatStr,
+                    customerName != null ? customerName : "N/A",
+                    area != null ? area.toString() : "N/A",
+                    stateTax != null ? stateTax.toString() : "N/A",
+                    product != null ? product.toString() : "N/A",
+                    haveAreaAndProduct ? getMaterialCost().toString() : "N/A",
+                    haveAreaAndProduct ? getLaborCost().toString() : "N/A",
+                    haveAreaProductStateTax ? getTax() : "N/A",
+                    haveAreaProductStateTax ? getTotal() : "N/A"
+            );
+        } else {
+            formatStr = "Order #%d" + formatStr;
+            return String.format(formatStr,
+                    orderNumber,
+                    customerName != null ? customerName : "N/A",
+                    area != null ? area.toString() : "N/A",
+                    stateTax != null ? stateTax.toString() : "N/A",
+                    product != null ? product.toString() : "N/A",
+                    haveAreaAndProduct ? getMaterialCost().toString() : "N/A",
+                    haveAreaAndProduct ? getLaborCost().toString() : "N/A",
+                    haveAreaProductStateTax ? getTax() : "N/A",
+                    haveAreaProductStateTax ? getTotal() : "N/A"
+            );
+        }
     }
 
     @Override
