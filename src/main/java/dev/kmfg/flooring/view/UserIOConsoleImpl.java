@@ -122,7 +122,7 @@ public class UserIOConsoleImpl implements UserIO {
 
         boolean givenBigDecimalMeetsMin = false;
         while(!s.matches(regex) || !givenBigDecimalMeetsMin) {
-            print(prompt);
+            print(prompt + " Max value of 9,999,999.99");
             s = userInput.nextLine();
 
             if(s.matches(regex)) {

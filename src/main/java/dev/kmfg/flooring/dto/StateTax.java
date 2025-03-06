@@ -1,10 +1,18 @@
 package dev.kmfg.flooring.dto;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class StateTax {
+    private static final NumberFormat NICE_NUMBER_FORMATTER = NumberFormat.getNumberInstance(Locale.US);
+
     private final String stateName, stateAbbreviation;
     private final BigDecimal taxRate;
+
+    static {
+        NICE_NUMBER_FORMATTER.setMinimumFractionDigits(2);
+    }
 
     public StateTax(String stateAbbreviation, String stateName, BigDecimal taxRate) {
         this.stateAbbreviation = stateAbbreviation;
@@ -66,9 +74,10 @@ public class StateTax {
 
     @Override
     public String toString() {
-        return String.format("%s (%s) - %.2f%%",
+        return String.format("%s (%s) - %s%%",
                 stateName,
                 stateAbbreviation,
-                taxRate);
+                NICE_NUMBER_FORMATTER.format(taxRate)
+        );
     }
 }

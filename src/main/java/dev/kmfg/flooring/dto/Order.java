@@ -2,10 +2,17 @@ package dev.kmfg.flooring.dto;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.util.Locale;
 
 public class Order {
+    private static final NumberFormat NICE_NUMBER_FORMATTER = NumberFormat.getNumberInstance(Locale.US);
     private static final BigDecimal ONE_HUNDRED = new BigDecimal(100).setScale(0, RoundingMode.UNNECESSARY);
+
+    static {
+        NICE_NUMBER_FORMATTER.setMinimumFractionDigits(2);
+    }
 
     private int orderNumber;
     private LocalDate orderDate;
@@ -132,34 +139,20 @@ public class Order {
         final boolean haveAreaAndProduct = area != null && product != null;
         final boolean haveAreaProductStateTax = haveAreaAndProduct && stateTax != null;
 
-        String formatStr = " for %s\n\tArea: %s sqft\n\tState Tax: %s\n\tProduct: %s\n\tMaterial: $%s | Labor: $%s | Tax: $%s | Total: $%s";
+        final String formatStr = "Order%s for %s\n\tArea: %s sqft\n\tState Tax: %s\n\tProduct: %s\n\tMaterial: $%s | Labor: $%s | Tax: $%s | Total: $%s";
+        final String orderNumberStr = orderNumber == -1 ? "" : " #" + orderNumber;
 
-        if(orderNumber == -1) {
-            formatStr = "Order" + formatStr;
-            return String.format(formatStr,
-                    customerName != null ? customerName : "N/A",
-                    area != null ? area.toString() : "N/A",
-                    stateTax != null ? stateTax.toString() : "N/A",
-                    product != null ? product.toString() : "N/A",
-                    haveAreaAndProduct ? getMaterialCost().toString() : "N/A",
-                    haveAreaAndProduct ? getLaborCost().toString() : "N/A",
-                    haveAreaProductStateTax ? getTax() : "N/A",
-                    haveAreaProductStateTax ? getTotal() : "N/A"
-            );
-        } else {
-            formatStr = "Order #%d" + formatStr;
-            return String.format(formatStr,
-                    orderNumber,
-                    customerName != null ? customerName : "N/A",
-                    area != null ? area.toString() : "N/A",
-                    stateTax != null ? stateTax.toString() : "N/A",
-                    product != null ? product.toString() : "N/A",
-                    haveAreaAndProduct ? getMaterialCost().toString() : "N/A",
-                    haveAreaAndProduct ? getLaborCost().toString() : "N/A",
-                    haveAreaProductStateTax ? getTax() : "N/A",
-                    haveAreaProductStateTax ? getTotal() : "N/A"
-            );
-        }
+        return String.format(formatStr,
+                orderNumberStr,
+                customerName != null ? customerName : "N/A",
+                area != null ? area.toString() : "N/A",
+                stateTax != null ? stateTax.toString() : "N/A",
+                product != null ? product.toString() : "N/A",
+                haveAreaAndProduct ? NICE_NUMBER_FORMATTER.format(getMaterialCost()) : "N/A",
+                haveAreaAndProduct ? NICE_NUMBER_FORMATTER.format(getLaborCost()) : "N/A",
+                haveAreaProductStateTax ? NICE_NUMBER_FORMATTER.format(getTax()) : "N/A",
+                haveAreaProductStateTax ? NICE_NUMBER_FORMATTER.format(getTotal()) : "N/A"
+        );
     }
 
     @Override

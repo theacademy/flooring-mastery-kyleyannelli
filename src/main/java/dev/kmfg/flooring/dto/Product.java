@@ -1,10 +1,18 @@
 package dev.kmfg.flooring.dto;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class Product {
+    private static final NumberFormat NICE_NUMBER_FORMATTER = NumberFormat.getNumberInstance(Locale.US);
+
     private final String productType;
     private final BigDecimal costPerSqft, laborCostPerSqft;
+
+    static {
+        NICE_NUMBER_FORMATTER.setMinimumFractionDigits(2);
+    }
 
     public Product(String productType, BigDecimal costPerSqft, BigDecimal laborCostPerSqft) {
         this.productType = productType;
@@ -68,7 +76,8 @@ public class Product {
     public String toString() {
         return String.format("%s ($%s/sqft material, $%s/sqft labor)",
                 productType,
-                costPerSqft,
-                laborCostPerSqft);
+                NICE_NUMBER_FORMATTER.format(costPerSqft),
+                NICE_NUMBER_FORMATTER.format(laborCostPerSqft)
+        );
     }
 }
