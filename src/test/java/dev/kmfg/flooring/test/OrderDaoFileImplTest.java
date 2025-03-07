@@ -78,12 +78,12 @@ public class OrderDaoFileImplTest {
     public void tearDown() throws IOException {
         File modifiedOrdersDirectory = new File(testOrdersPath);
 
-        // require non null was intellij suggestion, I would have done if null continue otherwise
+        // require nonnull was intellij suggestion, I would have done if null continue otherwise
         for(File file : Objects.requireNonNull(modifiedOrdersDirectory.listFiles())) {
             if(!file.isFile()) {
                 continue;
             }
-            file.delete();
+            assertTrue(file.delete(), "Test files could not be deleted. Subsequent tests are no longer in known good state!");
         }
 
         File backupOrdersDirectory = new File(testOrdersBackupPath);
@@ -159,9 +159,8 @@ public class OrderDaoFileImplTest {
                 );
 
         assertEquals(existingOrder, expectedOrder, "Existing order that was loaded does not match expected values!");
-        assertThrowsExactly(OrderNotFoundException.class, () -> {
-            testDao.getOrder(existingDate, existingId);
-        }, "Dao failed to throw OrderNotFoundException despite the order being called for removal!");
+        assertThrowsExactly(OrderNotFoundException.class, () -> testDao.getOrder(existingDate, existingId),
+                "Dao failed to throw OrderNotFoundException despite the order being called for removal!");
     }
 
     @Test

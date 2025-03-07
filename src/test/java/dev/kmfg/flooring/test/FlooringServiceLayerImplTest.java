@@ -84,7 +84,7 @@ public class FlooringServiceLayerImplTest {
     public void tearDown() throws IOException {
         File modifiedOrdersDirectory = new File(testOrdersPath);
 
-        // require non null was intellij suggestion, I would have done if null continue otherwise
+        // require nonnull was intellij suggestion, I would have done if null continue otherwise
         for(File file : Objects.requireNonNull(modifiedOrdersDirectory.listFiles())) {
             if(!file.isFile()) {
                 continue;
@@ -131,9 +131,7 @@ public class FlooringServiceLayerImplTest {
         // try to add an order with an area less than allowed
         final BigDecimal originalArea = testOrder.getArea();
         testOrder.setArea(GenericValidator.createBigDecimal("99.99"));
-        assertThrowsExactly(OrderDataValidationException.class, () -> {
-            service.addOrder(testOrder);
-        });
+        assertThrowsExactly(OrderDataValidationException.class, () -> service.addOrder(testOrder));
         // restore the area
         testOrder.setArea(originalArea);
 
@@ -146,9 +144,7 @@ public class FlooringServiceLayerImplTest {
         // try to add an order with a null product
         final Product originalProduct = testOrder.getProduct();
         testOrder.setProduct(null);
-        assertThrowsExactly(OrderDataValidationException.class, () -> {
-            service.addOrder(testOrder);
-        });
+        assertThrowsExactly(OrderDataValidationException.class, () -> service.addOrder(testOrder));
         // restore the product
         testOrder.setProduct(originalProduct);
 
@@ -161,9 +157,7 @@ public class FlooringServiceLayerImplTest {
         // attempt to add a fake product
         final Product originalKnownProduct = testOrder.getProduct();
         testOrder.setProduct(new Product("NR", GenericValidator.createBigDecimal("0"), GenericValidator.createBigDecimal("1")));
-        assertThrowsExactly(OrderDataValidationException.class, () -> {
-            service.addOrder(testOrder);
-        });
+        assertThrowsExactly(OrderDataValidationException.class, () -> service.addOrder(testOrder));
         // restore the known product
         testOrder.setProduct(originalKnownProduct);
 
@@ -175,9 +169,7 @@ public class FlooringServiceLayerImplTest {
 
         final StateTax originalKnownStateTax = testOrder.getStateTax();
         testOrder.setStateTax(new StateTax("NR", "Not Real", GenericValidator.createBigDecimal("1.1")));
-        assertThrowsExactly(OrderDataValidationException.class, () -> {
-            service.addOrder(testOrder);
-        });
+        assertThrowsExactly(OrderDataValidationException.class, () -> service.addOrder(testOrder));
         // restore the known state tax
         testOrder.setStateTax(originalKnownStateTax);
 
