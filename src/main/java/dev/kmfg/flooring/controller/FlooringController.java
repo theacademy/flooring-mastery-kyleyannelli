@@ -108,7 +108,7 @@ public class FlooringController {
         if(editedOrder.equals(orderToEdit)) {
             view.displayEditedOrderNotChanged(orderToEdit, editedOrder);
         } else if(view.displayConfirmOrderChange(orderToEdit, editedOrder)){
-            service.editOrder(editedOrder);
+            view.displayEditedOrder(service.editOrder(editedOrder));
         }
     }
 
@@ -130,7 +130,8 @@ public class FlooringController {
         orderToRemove = service.getOrder(orderToRemove.getOrderDate(), orderToRemove.getOrderNumber());
 
         if(view.displayConfirmOrderRemove(orderToRemove)) {
-            service.removeOrder(orderToRemove.getOrderDate(), orderToRemove.getOrderNumber());
+            final Order removedOrder = service.removeOrder(orderToRemove.getOrderDate(), orderToRemove.getOrderNumber());
+            view.displayRemovedOrder(removedOrder);
         }
     }
 }

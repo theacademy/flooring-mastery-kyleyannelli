@@ -329,6 +329,19 @@ public class FlooringView {
     }
 
     /**
+     * Displays the order that was removed.
+     * @param order will be displayed.
+     */
+    public void displayRemovedOrder(Order order) {
+        io.print(
+                String.format(
+                        "%s\nThe above order has been removed. This cannot be undone.",
+                        order.toString()
+                )
+        );
+    }
+
+    /**
      * Displays the original and edited order for comparison.
      * @param originalOrder will be compared to editedOrder.
      * @param editedOrder will be compared to originalOrder.
@@ -425,6 +438,19 @@ public class FlooringView {
                     )
             );
         }
+    }
+
+    /**
+     * Display an order after it has been edited, and received back by the service.
+     * @param order that was edited
+     */
+    public void displayEditedOrder(Order order) {
+        io.print(
+                String.format(
+                        "%s\nThe above order has been saved.",
+                        order.toString()
+                )
+        );
     }
 
     public void displayGoodbye() {
