@@ -146,6 +146,16 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
     }
 
     @Override
+    public int getNumberOfOrders() throws FlooringDataPersistenceException, OrderNotFoundException {
+        return orderDao.getAllOrders().size();
+    }
+
+    @Override
+    public void exportAll(String fileNameWithPath) throws FlooringDataPersistenceException {
+        orderDao.exportAll(fileNameWithPath);
+    }
+
+    @Override
     public List<Product> getAllProducts() throws FlooringDataPersistenceException {
         return productDao.getAllProducts();
     }

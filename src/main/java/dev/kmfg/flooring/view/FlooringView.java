@@ -371,6 +371,38 @@ public class FlooringView {
     }
 
     /**
+     * Prompts the user for a file and file path to export orders to.
+     * User must confirm their decision, otherwise an empty optional will be returned.
+     * @param numOfOrders in the system.
+     * @return the string, if the user wants to export
+     */
+    public Optional<String> displayExportAllOrders(int numOfOrders) {
+        final String exportFile = io.readString("Enter the relative or full path to export the orders to.\nExample export.txt or ~/export.txt");
+        final boolean doExport = io.readBoolean(
+                String.format(
+                        "Are you sure you want to export %d orders to %s? (y/n)",
+                        numOfOrders,
+                        exportFile
+                )
+        );
+        return doExport ? Optional.of(exportFile) : Optional.empty();
+    }
+
+    public void displayOrdersExported(int numOfOrders, String filePath) {
+        io.print(
+                String.format(
+                        "%d orders exported to %s!",
+                        numOfOrders,
+                        filePath
+                )
+        );
+    }
+
+    public void displayOrdersNotExported() {
+        io.print("Orders will not be exported.");
+    }
+
+    /**
      * Displays an exception with its class name, message, and cause message if it exists.
      * @param e the exception
      */

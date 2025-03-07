@@ -10,6 +10,7 @@ public enum MenuSelection {
     ADD_ORDER(3),
     EDIT_ORDER(4),
     REMOVE_ORDER(5),
+    EXPORT_ALL_ORDERS(6)
     ;
 
     private final int value;
@@ -29,8 +30,8 @@ public enum MenuSelection {
             return "";
         }
 
-        char firstChar = Character.toUpperCase(word.charAt(0));
-        String restOfWord = word.length() > 1 ? word.substring(1).toLowerCase() : "";
+        final char firstChar = Character.toUpperCase(word.charAt(0));
+        final String restOfWord = word.length() > 1 ? word.substring(1).toLowerCase() : "";
 
         return firstChar + restOfWord;
     }

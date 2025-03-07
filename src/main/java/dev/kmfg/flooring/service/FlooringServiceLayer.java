@@ -90,4 +90,18 @@ public interface FlooringServiceLayer {
      * @throws OrderDataValidationException if the order or any of its fields have invalid data
      */
     Order validateEntireOrder(Order order) throws OrderDataValidationException;
+
+    /**
+     * Gets the number of orders in the system.
+     * @return number of orders
+     * @throws FlooringDataPersistenceException if orders cannot be fetched.
+     */
+    int getNumberOfOrders() throws FlooringDataPersistenceException, OrderNotFoundException;
+
+    /**
+     * Exports all orders
+     * @param fileNameWithPath to export orders to
+     * @throws FlooringDataPersistenceException if orders cannot be saved to the file.
+     */
+    void exportAll(String fileNameWithPath) throws FlooringDataPersistenceException;
 }

@@ -49,6 +49,9 @@ public class FlooringController {
                 case EXIT:
                     goodbye();
                     break;
+                case EXPORT_ALL_ORDERS:
+                    exportAllOrders();
+                    break;
                 default:
                     view.displayUnimplementedMenuSelection(userSelection);
                     break;
@@ -106,6 +109,17 @@ public class FlooringController {
             view.displayEditedOrderNotChanged(orderToEdit, editedOrder);
         } else if(view.displayConfirmOrderChange(orderToEdit, editedOrder)){
             service.editOrder(editedOrder);
+        }
+    }
+
+    private void exportAllOrders() throws FlooringDataPersistenceException, OrderNotFoundException {
+        final int numOfOrders = service.getNumberOfOrders();
+        final Optional<String> filePathOpt = view.displayExportAllOrders(numOfOrders);
+        if(filePathOpt.isPresent()) {
+            service.exportAll(filePathOpt.get());
+            view.displayOrdersExported(numOfOrders, filePathOpt.get());
+        } else {
+            view.displayOrdersNotExported();
         }
     }
 

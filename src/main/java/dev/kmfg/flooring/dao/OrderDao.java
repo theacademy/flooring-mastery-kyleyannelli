@@ -9,6 +9,13 @@ import java.util.List;
 
 public interface OrderDao {
     /**
+     * Exports all orders
+     * @param fileNameWithPath to export orders to
+     * @throws FlooringDataPersistenceException if orders cannot be saved to the file.
+     */
+    void exportAll(String fileNameWithPath) throws FlooringDataPersistenceException;
+
+    /**
      * Gets all orders and dates.
      * Orders will be MISSING their StateTax State Name because this class cannot
      *  query the StateTaxDao

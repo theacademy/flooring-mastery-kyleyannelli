@@ -9,6 +9,7 @@ import java.util.Locale;
 public class GenericValidator {
     public static final NumberFormat NICE_NUMBER_FORMATTER = NumberFormat.getNumberInstance(Locale.US);
     public static final DateTimeFormatter STR_DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    public static final DateTimeFormatter EXPORT_DATE_FORMATTER = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 
     static {
         NICE_NUMBER_FORMATTER.setMinimumFractionDigits(2);
