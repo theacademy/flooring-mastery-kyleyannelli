@@ -56,16 +56,14 @@ public class FlooringController {
         } catch(FlooringDataPersistenceException | OrderDataValidationException | StateTaxNotFoundException e) {
             view.displayError(e);
         } catch(OrderNotFoundException orderNotFoundException) {
-            final int orderNumber = orderNotFoundException.getOrderNumber();
-            // orders objects that are created, but haven't been handled by the dao/service will have -1 order numbers.
-            if(orderNumber == -1) {
-                view.displayNoOrdersForDate(
-                        orderNotFoundException.getOrderDate()
-                );
-            } else {
+            if(orderNotFoundException.areThereAnyOrdersInDate()) {
                 view.displayOrderNotFound(
                         orderNotFoundException.getOrderDate(),
                         orderNotFoundException.getOrderNumber()
+                );
+            } else {
+                view.displayNoOrdersForDate(
+                        orderNotFoundException.getOrderDate()
                 );
             }
         }
