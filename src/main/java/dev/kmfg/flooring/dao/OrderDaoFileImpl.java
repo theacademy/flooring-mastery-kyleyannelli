@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -189,13 +190,18 @@ public class OrderDaoFileImpl implements OrderDao {
 
     private void write(LocalDate orderDate) throws FlooringDataPersistenceException {
         final String fileName = getFileName(orderDate);
+        final File file = new File(fileName);
 
         PrintWriter out;
 
+        // have to use atomic because
+        //  streams can be parallel
+        //  the compiler will complain if a regular int gets used
+        AtomicInteger numOrdersAdded = new AtomicInteger();
         try {
             // I am aware at a larger scale, or with software that may scale, this is quite poor.
             final boolean append = false;
-            out = new PrintWriter(new FileWriter(fileName, append));
+            out = new PrintWriter(new FileWriter(file, append));
 
             out.println(ORDERS_FILE_HEADER);
             orders.values().stream()
@@ -203,6 +209,7 @@ public class OrderDaoFileImpl implements OrderDao {
                     .forEach(order -> {
                         out.println(marshallOrder(order));
                         out.flush();
+                        numOrdersAdded.incrementAndGet();
                     });
         } catch (IOException e) {
             throw new FlooringDataPersistenceException(
@@ -215,6 +222,12 @@ public class OrderDaoFileImpl implements OrderDao {
         }
 
         out.close();
+        if(numOrdersAdded.get() == 0) {
+            // the result is ignored, otherwise this would be logged
+            // I don't think this warrants an exception because it does
+            // stop the program from running in a good state
+            file.delete();
+        }
     }
 
     @Override
