@@ -25,7 +25,8 @@ public class OrderValidator {
      * @return if the area meets spec.
      */
     public static boolean isAreaInvalid(String area) {
-        return !area.matches(AREA_REGEX);
+        return area == null ||
+                !area.matches(AREA_REGEX);
     }
 
     /**
@@ -34,6 +35,9 @@ public class OrderValidator {
      * @return if the name meets spec.
      */
     public static boolean isCustomerNameInvalid(String customerName) {
-        return !customerName.matches(VALID_CUSTOMER_NAME_REGEX);
+        return customerName == null ||
+                customerName.isBlank() ||
+                customerName.charAt(0) == ' ' ||
+                !customerName.matches(VALID_CUSTOMER_NAME_REGEX);
     }
 }

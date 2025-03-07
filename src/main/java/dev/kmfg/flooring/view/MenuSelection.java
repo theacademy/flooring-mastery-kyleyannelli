@@ -25,7 +25,7 @@ public enum MenuSelection {
     }
 
     private String capitalizeWord(String word) {
-        if (word.isEmpty()) {
+        if(word.isEmpty()) {
             return "";
         }
 
