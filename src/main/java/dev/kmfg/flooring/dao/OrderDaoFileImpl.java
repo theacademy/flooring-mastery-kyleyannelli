@@ -198,6 +198,15 @@ public class OrderDaoFileImpl implements OrderDao {
      */
     private void readAll() throws FlooringDataPersistenceException, OrderNotFoundException {
         Path filePath = Paths.get(ordersPath);
+
+        if(!Files.exists(filePath)) {
+            try {
+                Files.createDirectories(filePath);
+            } catch (IOException e) {
+                throw new FlooringDataPersistenceException("Could not create orders directory", e);
+            }
+        }
+
         try {
             orders = new HashMap<>();
 
@@ -215,9 +224,61 @@ public class OrderDaoFileImpl implements OrderDao {
         }
     }
 
+    /**
+     * Creates a file and its underlying directories.
+     * @param fileNameWithPath
+     * @return the file
+     * @throws FlooringDataPersistenceException if it cannot be done.
+     */
+    public File createAndGetFile(String fileNameWithPath, boolean overwrite) throws FlooringDataPersistenceException {
+        final File file = new File(fileNameWithPath);
+
+        if(!overwrite && file.exists()) {
+            throw new FlooringDataPersistenceException(
+                    String.format(
+                            "Cannot export to an existing file, %s",
+                            fileNameWithPath
+                    )
+            );
+        } else if(overwrite && file.exists()) {
+            return file;
+        }
+
+        // make the required directories, and if it fails
+        if(file.getParentFile() != null && !file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+            throw new FlooringDataPersistenceException(
+                    String.format(
+                            "Unable to make directories for requested file %s",
+                            fileNameWithPath
+                    )
+            );
+        }
+
+        try {
+            if(!file.createNewFile()) {
+                throw new FlooringDataPersistenceException(
+                        String.format(
+                                "Could not create file %s!",
+                                fileNameWithPath
+                        )
+                );
+            }
+        } catch(IOException e) {
+            throw new FlooringDataPersistenceException(
+                    String.format(
+                            "Could not create file %s due to IO exception!",
+                            fileNameWithPath
+                    ),
+                    e
+            );
+        }
+        return file;
+    }
+
     private void write(LocalDate orderDate) throws FlooringDataPersistenceException {
         final String fileName = getFileName(orderDate);
-        final File file = new File(fileName);
+        final boolean overwrite = true;
+        final File file = createAndGetFile(fileName, overwrite);
 
         PrintWriter out;
 
@@ -264,26 +325,8 @@ public class OrderDaoFileImpl implements OrderDao {
             throw new FlooringDataPersistenceException("Cannot export when you have no orders!");
         }
 
-        final File file = new File(fileNameWithPath);
-
-        if(file.exists()) {
-            throw new FlooringDataPersistenceException(
-                    String.format(
-                            "Cannot export to an existing file, %s",
-                            fileNameWithPath
-                    )
-            );
-        }
-
-        // make the required directories, and if it fails
-        if(file.getParentFile() != null && !file.getParentFile().mkdirs()) {
-            throw new FlooringDataPersistenceException(
-                    String.format(
-                            "Unable to make directories for requested file %s",
-                            fileNameWithPath
-                    )
-            );
-        }
+        final boolean overwrite = false;
+        File file = createAndGetFile(fileNameWithPath, overwrite);
 
         PrintWriter out;
 
