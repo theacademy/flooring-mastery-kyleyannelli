@@ -5,10 +5,10 @@ import dev.kmfg.flooring.dao.StateTaxDaoFileImpl;
 import dev.kmfg.flooring.dao.exception.FlooringDataPersistenceException;
 import dev.kmfg.flooring.dao.exception.StateTaxNotFoundException;
 import dev.kmfg.flooring.model.StateTax;
+import dev.kmfg.flooring.service.validator.GenericValidator;
 import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -79,7 +79,7 @@ public class StateTaxDaoFileImplTest {
         }
 
         final String knownStateName = "Kentucky";
-        final BigDecimal knownTaxRate = new BigDecimal("6.00").setScale(2, RoundingMode.HALF_UP);
+        final BigDecimal knownTaxRate = GenericValidator.createBigDecimal("6.00");
 
         assertTrue(knownStateName.equalsIgnoreCase(stateTax.getStateName()), "The state name does not match the expected name!");
         assertTrue(knownStateAbbreviation.equalsIgnoreCase(stateTax.getStateAbbreviation()), "The state abbreviation does not match the expected abbreviation!");

@@ -3,12 +3,12 @@ package dev.kmfg.flooring.dao;
 import dev.kmfg.flooring.dao.exception.FlooringDataPersistenceException;
 import dev.kmfg.flooring.dao.exception.ProductNotFoundException;
 import dev.kmfg.flooring.model.Product;
+import dev.kmfg.flooring.service.validator.GenericValidator;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 
 public class ProductDaoFileImpl implements ProductDao {
@@ -40,8 +40,8 @@ public class ProductDaoFileImpl implements ProductDao {
         }
 
         final String productType = productParts[0];
-        final BigDecimal costPerSqft = new BigDecimal(productParts[1]).setScale(2, RoundingMode.HALF_UP);
-        final BigDecimal laborCostPerSqft = new BigDecimal(productParts[2]).setScale(2, RoundingMode.HALF_UP);
+        final BigDecimal costPerSqft = GenericValidator.createBigDecimal(productParts[1]);
+        final BigDecimal laborCostPerSqft = GenericValidator.createBigDecimal(productParts[2]);
 
         return new Product(productType, costPerSqft, laborCostPerSqft);
     }

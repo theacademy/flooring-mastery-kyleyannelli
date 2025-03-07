@@ -1,7 +1,5 @@
 package dev.kmfg.flooring.view;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -9,10 +7,6 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class UserIOConsoleImpl implements UserIO {
-    private static final int MINIMUM_BIG_DECIMAL_DIGITS = 3;
-    private static final int MAXIMUM_BIG_DECIMAL_DIGITS = 7;
-    private static final String BIG_DECIMAL_REGEX_FORMAT = "^\\d{%d,%d}\\.\\d{%d}$";
-
     private final Scanner userInput;
 
     public UserIOConsoleImpl() {
@@ -106,31 +100,5 @@ public class UserIOConsoleImpl implements UserIO {
         }
 
         return date;
-    }
-
-    @Override
-    public BigDecimal readBigDecimal(String prompt, int scale, BigDecimal min) {
-        String s = "";
-        BigDecimal givenBigDecimal = min.subtract(BigDecimal.ONE).setScale(scale, RoundingMode.HALF_UP);
-
-        final String regex = String.format(
-                BIG_DECIMAL_REGEX_FORMAT,
-                MINIMUM_BIG_DECIMAL_DIGITS,
-                MAXIMUM_BIG_DECIMAL_DIGITS,
-                scale
-        );
-
-        boolean givenBigDecimalMeetsMin = false;
-        while(!s.matches(regex) || !givenBigDecimalMeetsMin) {
-            print(prompt + " Max value of 9,999,999.99");
-            s = userInput.nextLine();
-
-            if(s.matches(regex)) {
-                givenBigDecimal = new BigDecimal(s).setScale(scale, RoundingMode.HALF_UP);
-                givenBigDecimalMeetsMin = givenBigDecimal.compareTo(min) >= 0;
-            }
-        }
-
-        return givenBigDecimal;
     }
 }

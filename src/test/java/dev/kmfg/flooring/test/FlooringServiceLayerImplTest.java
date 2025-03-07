@@ -10,6 +10,7 @@ import dev.kmfg.flooring.model.StateTax;
 import dev.kmfg.flooring.service.FlooringServiceLayer;
 import dev.kmfg.flooring.service.FlooringServiceLayerImpl;
 import dev.kmfg.flooring.service.exception.OrderDataValidationException;
+import dev.kmfg.flooring.service.validator.GenericValidator;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -57,20 +57,20 @@ public class FlooringServiceLayerImplTest {
         //  data validation should fail if unknown products or state taxes are used.
         final Product knownProduct = new Product(
                 "Tile",
-                new BigDecimal("3.50").setScale(2, RoundingMode.HALF_UP),
-                new BigDecimal("4.15").setScale(2, RoundingMode.HALF_UP)
+                GenericValidator.createBigDecimal("3.50"),
+                GenericValidator.createBigDecimal("4.15")
         );
 
         final StateTax knownStateTax = new StateTax(
                 "CA",
                 "California",
-                new BigDecimal("25.00").setScale(2, RoundingMode.HALF_UP)
+                GenericValidator.createBigDecimal("25.00")
         );
         // note order number is not set because the dao will generate it
         testOrder = new Order()
                 .setOrderDate(LocalDate.now())
                 .setCustomerName("John Smith")
-                .setArea(new BigDecimal("100.00").setScale(2, RoundingMode.HALF_UP))
+                .setArea(GenericValidator.createBigDecimal("100.00"))
                 .setProduct(knownProduct)
                 .setStateTax(knownStateTax);
     }
@@ -130,7 +130,7 @@ public class FlooringServiceLayerImplTest {
     public void testOrderValidation() {
         // try to add an order with an area less than allowed
         final BigDecimal originalArea = testOrder.getArea();
-        testOrder.setArea(new BigDecimal("99.99").setScale(2, RoundingMode.HALF_UP));
+        testOrder.setArea(GenericValidator.createBigDecimal("99.99"));
         assertThrowsExactly(OrderDataValidationException.class, () -> {
             service.addOrder(testOrder);
         });
@@ -160,7 +160,7 @@ public class FlooringServiceLayerImplTest {
 
         // attempt to add a fake product
         final Product originalKnownProduct = testOrder.getProduct();
-        testOrder.setProduct(new Product("NR", new BigDecimal(0), new BigDecimal(1)));
+        testOrder.setProduct(new Product("NR", GenericValidator.createBigDecimal("0"), GenericValidator.createBigDecimal("1")));
         assertThrowsExactly(OrderDataValidationException.class, () -> {
             service.addOrder(testOrder);
         });
@@ -174,7 +174,7 @@ public class FlooringServiceLayerImplTest {
         });
 
         final StateTax originalKnownStateTax = testOrder.getStateTax();
-        testOrder.setStateTax(new StateTax("NR", "Not Real", new BigDecimal("1.1")));
+        testOrder.setStateTax(new StateTax("NR", "Not Real", GenericValidator.createBigDecimal("1.1")));
         assertThrowsExactly(OrderDataValidationException.class, () -> {
             service.addOrder(testOrder);
         });

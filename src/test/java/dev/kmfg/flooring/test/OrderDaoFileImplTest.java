@@ -7,20 +7,18 @@ import dev.kmfg.flooring.dao.exception.OrderNotFoundException;
 import dev.kmfg.flooring.model.Order;
 import dev.kmfg.flooring.model.Product;
 import dev.kmfg.flooring.model.StateTax;
+import dev.kmfg.flooring.service.validator.GenericValidator;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -53,20 +51,20 @@ public class OrderDaoFileImplTest {
 
         final Product fakeProduct = new Product(
                 "Not Real",
-                new BigDecimal("2.21").setScale(2, RoundingMode.HALF_UP),
-                new BigDecimal("3.23").setScale(2, RoundingMode.HALF_UP)
+                GenericValidator.createBigDecimal("2.21"),
+                GenericValidator.createBigDecimal("3.23")
         );
 
         final StateTax fakeStateTax = new StateTax(
                 "CA",
                 "California",
-                new BigDecimal("25.00").setScale(2, RoundingMode.HALF_UP)
+                GenericValidator.createBigDecimal("25.00")
         );
         // note order number is not set because the dao will generate it
         testOrder = new Order()
                 .setOrderDate(LocalDate.now())
                 .setCustomerName("John Smith")
-                .setArea(new BigDecimal("100.00").setScale(2, RoundingMode.HALF_UP))
+                .setArea(GenericValidator.createBigDecimal("100.00"))
                 .setProduct(fakeProduct)
                 .setStateTax(fakeStateTax);
     }
@@ -122,8 +120,7 @@ public class OrderDaoFileImplTest {
         // attempt to get the below
         // 06/01/2013
         // 1,Ada Lovelace,CA,25.00,Tile,249.00,3.50,4.15,871.50,1033.35,476.21,2381.06
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        final LocalDate existingDate = LocalDate.parse("06/01/2013", formatter);
+        final LocalDate existingDate = LocalDate.parse("06/01/2013", GenericValidator.STR_DATE_FORMATTER);
         final int existingId = 1;
 
         Order existingOrder = null;
@@ -144,20 +141,20 @@ public class OrderDaoFileImplTest {
                 .setOrderNumber(existingId)
                 .setOrderDate(existingDate)
                 .setCustomerName("Ada Lovelace")
-                .setArea(new BigDecimal("249.00").setScale(2, RoundingMode.HALF_UP))
+                .setArea(GenericValidator.createBigDecimal("249.00"))
                 .setStateTax(
                         new StateTax(
                                 "CA",
                                 "Not Loaded", // the order dao cannot load state tax data, this is handled by the service
-                                new BigDecimal("25.00").setScale(2, RoundingMode.HALF_UP)
+                                GenericValidator.createBigDecimal("25.00")
                         )
                 )
                 // Tile,3.50,4.15
                 .setProduct(
                         new Product(
                                 "Tile",
-                                new BigDecimal("3.50").setScale(2, RoundingMode.HALF_UP),
-                                new BigDecimal("4.15").setScale(2, RoundingMode.HALF_UP)
+                                GenericValidator.createBigDecimal("3.50"),
+                                GenericValidator.createBigDecimal("4.15")
                         )
                 );
 
@@ -172,7 +169,7 @@ public class OrderDaoFileImplTest {
         assertDoesNotThrow(() -> testDao.addOrder(testOrder));
 
         final Order editedOrder = testOrder.cloneOrder();
-        editedOrder.setArea(new BigDecimal("5612.23").setScale(2, RoundingMode.HALF_UP));
+        editedOrder.setArea(GenericValidator.createBigDecimal("5612.23"));
 
         assertDoesNotThrow(() -> testDao.editOrder(editedOrder));
 
@@ -226,28 +223,27 @@ public class OrderDaoFileImplTest {
     @Test
     public void testGetAllOrdersFromFile() {
         final List<Order> expectedOrders = new ArrayList<>();
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        final LocalDate existingDateOne = LocalDate.parse("06/01/2013", formatter);
-        final LocalDate existingDateTwo = LocalDate.parse("06/02/2013", formatter);
+        final LocalDate existingDateOne = LocalDate.parse("06/01/2013", GenericValidator.STR_DATE_FORMATTER);
+        final LocalDate existingDateTwo = LocalDate.parse("06/02/2013", GenericValidator.STR_DATE_FORMATTER);
         // 1,Ada Lovelace,CA,25.00,Tile,249.00,3.50,4.15,871.50,1033.35,476.21,2381.06
         final Order orderOne = new Order()
                 .setOrderNumber(1)
                 .setOrderDate(existingDateOne)
                 .setCustomerName("Ada Lovelace")
-                .setArea(new BigDecimal("249.00").setScale(2, RoundingMode.HALF_UP))
+                .setArea(GenericValidator.createBigDecimal("249.00"))
                 .setStateTax(
                         new StateTax(
                                 "CA",
                                 "Not Loaded", // the order dao cannot load state tax data, this is handled by the service
-                                new BigDecimal("25.00").setScale(2, RoundingMode.HALF_UP)
+                                GenericValidator.createBigDecimal("25.00")
                         )
                 )
                 // Tile,3.50,4.15
                 .setProduct(
                         new Product(
                                 "Tile",
-                                new BigDecimal("3.50").setScale(2, RoundingMode.HALF_UP),
-                                new BigDecimal("4.15").setScale(2, RoundingMode.HALF_UP)
+                                GenericValidator.createBigDecimal("3.50"),
+                                GenericValidator.createBigDecimal("4.15")
                         )
                 );
         expectedOrders.add(orderOne);
@@ -256,20 +252,20 @@ public class OrderDaoFileImplTest {
                 .setOrderNumber(2)
                 .setOrderDate(existingDateTwo)
                 .setCustomerName("Doctor Who")
-                .setArea(new BigDecimal("243.00").setScale(2, RoundingMode.HALF_UP))
+                .setArea(GenericValidator.createBigDecimal("243.00"))
                 .setStateTax(
                         new StateTax(
                                 "WA",
                                 "Not Loaded", // the order dao cannot load state tax data, this is handled by the service
-                                new BigDecimal("9.25").setScale(2, RoundingMode.HALF_UP)
+                                GenericValidator.createBigDecimal("9.25")
                         )
                 )
                 // Wood,5.15,4.75
                 .setProduct(
                         new Product(
                                 "Wood",
-                                new BigDecimal("5.15").setScale(2, RoundingMode.HALF_UP),
-                                new BigDecimal("4.75").setScale(2, RoundingMode.HALF_UP)
+                                GenericValidator.createBigDecimal("5.15"),
+                                GenericValidator.createBigDecimal("4.75")
                         )
                 );
         expectedOrders.add(orderTwo);
@@ -278,20 +274,20 @@ public class OrderDaoFileImplTest {
                 .setOrderNumber(3)
                 .setOrderDate(existingDateTwo)
                 .setCustomerName("Albert Einstein")
-                .setArea(new BigDecimal("217.00").setScale(2, RoundingMode.HALF_UP))
+                .setArea(GenericValidator.createBigDecimal("217.00"))
                 .setStateTax(
                         new StateTax(
                                 "KY",
                                 "Not Loaded", // the order dao cannot load state tax data, this is handled by the service
-                                new BigDecimal("6.00").setScale(2, RoundingMode.HALF_UP)
+                                GenericValidator.createBigDecimal("6.00")
                         )
                 )
                 // Carpet,2.25,2.10
                 .setProduct(
                         new Product(
                                 "Carpet",
-                                new BigDecimal("2.25").setScale(2, RoundingMode.HALF_UP),
-                                new BigDecimal("2.10").setScale(2, RoundingMode.HALF_UP)
+                                GenericValidator.createBigDecimal("2.25"),
+                                GenericValidator.createBigDecimal("2.10")
                         )
                 );
         expectedOrders.add(orderThree);

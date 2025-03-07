@@ -57,14 +57,15 @@ public class FlooringController {
             view.displayError(e);
         } catch(OrderNotFoundException orderNotFoundException) {
             final int orderNumber = orderNotFoundException.getOrderNumber();
-            if(orderNumber != -1) {
+            // orders objects that are created, but haven't been handled by the dao/service will have -1 order numbers.
+            if(orderNumber == -1) {
+                view.displayNoOrdersForDate(
+                        orderNotFoundException.getOrderDate()
+                );
+            } else {
                 view.displayOrderNotFound(
                         orderNotFoundException.getOrderDate(),
                         orderNotFoundException.getOrderNumber()
-                );
-            } else {
-                view.displayNoOrdersForDate(
-                        orderNotFoundException.getOrderDate()
                 );
             }
         }

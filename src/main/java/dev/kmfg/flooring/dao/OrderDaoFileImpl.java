@@ -5,10 +5,10 @@ import dev.kmfg.flooring.dao.exception.OrderNotFoundException;
 import dev.kmfg.flooring.model.Order;
 import dev.kmfg.flooring.model.Product;
 import dev.kmfg.flooring.model.StateTax;
+import dev.kmfg.flooring.service.validator.GenericValidator;
 
 import java.io.*;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,14 +33,14 @@ public class OrderDaoFileImpl implements OrderDao {
 
     private HashMap<Integer, Order> orders;
 
-    public OrderDaoFileImpl(String ordersPath) {
-        this.ordersPath = ordersPath;
+    public OrderDaoFileImpl() {
+        this.ordersPath = "Data/Orders";
         this.fileName = ordersPath + FILE_FORMAT;
         this.orders = new HashMap<>();
     }
 
-    public OrderDaoFileImpl() {
-        this.ordersPath = "Data/Orders";
+    public OrderDaoFileImpl(String ordersPath) {
+        this.ordersPath = ordersPath;
         this.fileName = ordersPath + FILE_FORMAT;
         this.orders = new HashMap<>();
     }
@@ -69,11 +69,11 @@ public class OrderDaoFileImpl implements OrderDao {
             final int orderNumber = Integer.parseInt(orderParts[0]);
             final String customerName = orderParts[1].replace('#', ',');
             final String stateAbbreviation = orderParts[2];
-            final BigDecimal taxRate = new BigDecimal(orderParts[3]).setScale(2, RoundingMode.HALF_UP);
+            final BigDecimal taxRate = GenericValidator.createBigDecimal(orderParts[3]);
             final String productType = orderParts[4];
-            final BigDecimal area = new BigDecimal(orderParts[5]).setScale(2, RoundingMode.HALF_UP);
-            final BigDecimal costPerSqft = new BigDecimal(orderParts[6]).setScale(2, RoundingMode.HALF_UP);
-            final BigDecimal laborCostPerSqft = new BigDecimal(orderParts[7]).setScale(2, RoundingMode.HALF_UP);
+            final BigDecimal area = GenericValidator.createBigDecimal(orderParts[5]);
+            final BigDecimal costPerSqft = GenericValidator.createBigDecimal(orderParts[6]);
+            final BigDecimal laborCostPerSqft = GenericValidator.createBigDecimal(orderParts[7]);
 
             final StateTax stateTax = new StateTax(stateAbbreviation, "Not Loaded", taxRate);
             final Product product = new Product(productType, costPerSqft, laborCostPerSqft);
@@ -193,6 +193,7 @@ public class OrderDaoFileImpl implements OrderDao {
         PrintWriter out;
 
         try {
+            // I am aware at a larger scale, or with software that may scale, this is quite poor.
             final boolean append = false;
             out = new PrintWriter(new FileWriter(fileName, append));
 

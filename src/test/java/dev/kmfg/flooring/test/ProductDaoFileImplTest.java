@@ -5,10 +5,10 @@ import dev.kmfg.flooring.dao.ProductDaoFileImpl;
 import dev.kmfg.flooring.dao.exception.FlooringDataPersistenceException;
 import dev.kmfg.flooring.dao.exception.ProductNotFoundException;
 import dev.kmfg.flooring.model.Product;
+import dev.kmfg.flooring.service.validator.GenericValidator;
 import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -78,8 +78,8 @@ public class ProductDaoFileImplTest {
             fail("The known product was received, but is null");
         }
 
-        final BigDecimal knownCostPerSqft = new BigDecimal("3.50").setScale(2, RoundingMode.HALF_UP);
-        final BigDecimal knownLaborCostPerSqft = new BigDecimal("4.15").setScale(2, RoundingMode.HALF_UP);
+        final BigDecimal knownCostPerSqft = GenericValidator.createBigDecimal("3.50");
+        final BigDecimal knownLaborCostPerSqft = GenericValidator.createBigDecimal("4.15");
 
         assertTrue(knownProductType.equalsIgnoreCase(product.getProductType()), "The product type does not match the expected name!");
         assertEquals(knownCostPerSqft, product.getCostPerSqft(), "The cost per sqft does not match the expected value!");

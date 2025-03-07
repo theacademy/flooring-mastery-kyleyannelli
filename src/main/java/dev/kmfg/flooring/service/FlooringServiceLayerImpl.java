@@ -11,17 +11,15 @@ import dev.kmfg.flooring.model.Order;
 import dev.kmfg.flooring.model.Product;
 import dev.kmfg.flooring.model.StateTax;
 import dev.kmfg.flooring.service.exception.OrderDataValidationException;
+import dev.kmfg.flooring.service.validator.OrderValidator;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class FlooringServiceLayerImpl implements FlooringServiceLayer {
-    private static final BigDecimal ONE_HUNDRED = new BigDecimal(100).setScale(0, RoundingMode.UNNECESSARY);
-
     private final OrderDao orderDao;
     private final ProductDao productDao;
     private final StateTaxDao stateTaxDao;
@@ -61,11 +59,13 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
     private void validateProduct(Product product) throws OrderDataValidationException {
         if(product == null) {
             throw new OrderDataValidationException("Validation failed for order has a null product.");
-        } else if(product.getProductType() == null || product.getProductType().isBlank()) {
-            throw new OrderDataValidationException("Validation failed for order because its product does not have a type.");
+        } else if(product.getProductType() == null) {
+            throw new OrderDataValidationException("Validation failed for order because its product has a null product type.");
+        } else if(product.getProductType().isBlank()) {
+            throw new OrderDataValidationException("Validation failed for order because its product has a blank product type.");
         } else if(product.getCostPerSqft() == null) {
             throw new OrderDataValidationException(
-                    "Validation failed for order because its product has a cost per sqft of 0 or less."
+                    "Validation failed for order because its product has a null cost per sqft."
             );
         } else if(BigDecimal.ZERO.compareTo(product.getCostPerSqft()) > 0) {
             throw new OrderDataValidationException(
@@ -74,7 +74,9 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
                             product.getCostPerSqft().toString()
                     )
             );
-        } else if(product.getLaborCostPerSqft() == null || BigDecimal.ZERO.compareTo(product.getLaborCostPerSqft()) > 0) {
+        } else if(product.getLaborCostPerSqft() == null) {
+            throw new OrderDataValidationException("Validation failed for order because its product has a null labor cost per sqft.");
+        } else if(BigDecimal.ZERO.compareTo(product.getLaborCostPerSqft()) > 0) {
             throw new OrderDataValidationException("Validation failed for order because its product has a labor cost per sqft of 0 or less.");
         }
 
@@ -97,7 +99,9 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
             throw new OrderDataValidationException("Validation failed for order because its state tax does not have a state name.");
         } else if(stateTax.getStateAbbreviation() == null || stateTax.getStateAbbreviation().isBlank()) {
             throw new OrderDataValidationException("Validation failed for order because its state tax does not have a state abbreviation.");
-        } else if(stateTax.getTaxRate() == null || BigDecimal.ZERO.compareTo(stateTax.getTaxRate()) > 0) {
+        } else if(stateTax.getTaxRate() == null) {
+            throw new OrderDataValidationException("Validation failed for order because its state tax has a null tax rate.");
+        } else if(BigDecimal.ZERO.compareTo(stateTax.getTaxRate()) > 0) {
             throw new OrderDataValidationException("Validation failed for order because its state tax has a tax rate of 0 or less.");
         }
 
@@ -122,11 +126,12 @@ public class FlooringServiceLayerImpl implements FlooringServiceLayer {
             throw new OrderDataValidationException("Validation failed for order because customer name has no characters.");
         } else if(order.getArea() == null) {
             throw new OrderDataValidationException("Validation failed for order because area is null.");
-        } else if(ONE_HUNDRED.compareTo(order.getArea()) > 0) {
+        } else if(OrderValidator.isAreaInvalid(order.getArea().toString())) {
             throw new OrderDataValidationException(
-                    String.format("Validation failed for order because area of %s is less than %s.",
+                    String.format("Validation failed for order because area of %s does not match the area scale of %d, or meet minimum %s.",
                             order.getArea(),
-                            ONE_HUNDRED
+                            OrderValidator.AREA_SCALE,
+                            OrderValidator.AREA_MIN_BD
                     )
             );
         }

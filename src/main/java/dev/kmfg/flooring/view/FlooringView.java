@@ -3,21 +3,15 @@ package dev.kmfg.flooring.view;
 import dev.kmfg.flooring.model.Order;
 import dev.kmfg.flooring.model.Product;
 import dev.kmfg.flooring.model.StateTax;
+import dev.kmfg.flooring.service.validator.GenericValidator;
+import dev.kmfg.flooring.service.validator.OrderValidator;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 public class FlooringView {
-    private static final int MIN_CUSTOMER_NAME_CHARS = 1;
-    private static final int MAX_CUSTOMER_NAME_CHARS = 100;
-    private static final String VALID_CUSTOMER_NAME_REGEX = String.format("^[a-zA-Z0-9., ]{%d,%d}$", MIN_CUSTOMER_NAME_CHARS, MAX_CUSTOMER_NAME_CHARS);
-    private static final BigDecimal ONE_HUNDRED = new BigDecimal(100).setScale(2, RoundingMode.HALF_UP);
-    private static final DateTimeFormatter STR_DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-
     private final UserIO io;
 
     public FlooringView(UserIO io) {
@@ -46,19 +40,19 @@ public class FlooringView {
         return io.readLocalDate(
                 String.format(
                         "Enter a date in MM/DD/YYYY format. The date must be %s or later.",
-                        min.format(STR_DATE_FORMATTER)
+                        min.format(GenericValidator.STR_DATE_FORMATTER)
                 ),
                 min,
-                STR_DATE_FORMATTER
+                GenericValidator.STR_DATE_FORMATTER
         );
     }
 
     private LocalDate promptOrderDate() {
-        return io.readLocalDate("Enter a date in MM/DD/YYYY format.", STR_DATE_FORMATTER);
+        return io.readLocalDate("Enter a date in MM/DD/YYYY format.", GenericValidator.STR_DATE_FORMATTER);
     }
 
     private int promptOrderNumber() {
-        return io.readInt("Enter the order number.", 1, Integer.MAX_VALUE);
+        return io.readInt("Enter the order number.", OrderValidator.MIN_ORDER_NUMBER, OrderValidator.MAX_ORDER_NUMBER);
     }
 
     /**
@@ -67,12 +61,12 @@ public class FlooringView {
     private String promptCustomerName() {
         String givenCustomerName = "";
 
-        while(!givenCustomerName.matches(VALID_CUSTOMER_NAME_REGEX)) {
+        while(OrderValidator.isCustomerNameInvalid(givenCustomerName)) {
             givenCustomerName = io.readString(
                     String.format(
                             "Provide a customer name. It must be [%d, %d] characters. It can only contain a-Z, 0-9, period, or comma characters.",
-                            MIN_CUSTOMER_NAME_CHARS,
-                            MAX_CUSTOMER_NAME_CHARS
+                            OrderValidator.MIN_CUSTOMER_NAME_CHARS,
+                            OrderValidator.MAX_CUSTOMER_NAME_CHARS
                     )
             );
         }
@@ -84,14 +78,11 @@ public class FlooringView {
      * @return area of at least one hundred, with a scale of 2.
      */
     private BigDecimal promptArea() {
-        return io.readBigDecimal(
-                String.format(
-                        "Enter the area sqft in XXXX.XX format. It must be exactly to the hundredths place. At least %s or greater.",
-                        ONE_HUNDRED
-                ),
-                2,
-                ONE_HUNDRED
-        );
+        String area = "";
+        while(OrderValidator.isAreaInvalid(area)) {
+            area = io.readString("Enter the area sqft in XXX.XX format. It must be exactly to the hundredths place, 100.00 or greater.");
+        }
+        return GenericValidator.createBigDecimal(area);
     }
 
     /**
@@ -171,14 +162,14 @@ public class FlooringView {
             io.print(
                     String.format(
                             "No orders found for %s.",
-                            ordersDate.format(STR_DATE_FORMATTER)
+                            ordersDate.format(GenericValidator.STR_DATE_FORMATTER)
                     )
             );
         } else {
             io.print(
                     String.format(
                             "Orders found for %s.",
-                            ordersDate.format(STR_DATE_FORMATTER)
+                            ordersDate.format(GenericValidator.STR_DATE_FORMATTER)
                     )
             );
             foundOrders.forEach(System.out::println);
@@ -273,7 +264,7 @@ public class FlooringView {
                 String.format(
                         "Editing Order #%d %s",
                         orderToEdit.getOrderNumber(),
-                        orderToEdit.getOrderDate().format(STR_DATE_FORMATTER)
+                        orderToEdit.getOrderDate().format(GenericValidator.STR_DATE_FORMATTER)
                 )
         );
 
@@ -356,7 +347,7 @@ public class FlooringView {
         io.print(
                 String.format(
                         "No orders found on %s.",
-                        orderDate.format(STR_DATE_FORMATTER)
+                        orderDate.format(GenericValidator.STR_DATE_FORMATTER)
                 )
         );
     }
@@ -367,7 +358,7 @@ public class FlooringView {
                 String.format(
                         "No order found for order #%d on %s.",
                         orderNumber,
-                        orderDate.format(STR_DATE_FORMATTER)
+                        orderDate.format(GenericValidator.STR_DATE_FORMATTER)
                 )
         );
     }

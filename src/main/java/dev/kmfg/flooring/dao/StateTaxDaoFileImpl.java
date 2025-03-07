@@ -3,12 +3,12 @@ package dev.kmfg.flooring.dao;
 import dev.kmfg.flooring.dao.exception.FlooringDataPersistenceException;
 import dev.kmfg.flooring.dao.exception.StateTaxNotFoundException;
 import dev.kmfg.flooring.model.StateTax;
+import dev.kmfg.flooring.service.validator.GenericValidator;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +44,7 @@ public class StateTaxDaoFileImpl implements StateTaxDao {
 
         final String stateAbbreviation = productParts[0];
         final String stateName = productParts[1];
-        final BigDecimal taxRate = new BigDecimal(productParts[2]).setScale(2, RoundingMode.HALF_UP);
+        final BigDecimal taxRate = GenericValidator.createBigDecimal(productParts[2]);
 
         return new StateTax(stateAbbreviation, stateName, taxRate);
     }
