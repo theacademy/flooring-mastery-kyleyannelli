@@ -89,7 +89,7 @@ public class FlooringServiceLayerImplTest {
             if(!file.isFile()) {
                 continue;
             }
-            file.delete();
+            assertTrue(file.delete(), "Test files could not be deleted. Subsequent tests are no longer in known good state!");
         }
 
         File backupOrdersDirectory = new File(testOrdersBackupPath);
