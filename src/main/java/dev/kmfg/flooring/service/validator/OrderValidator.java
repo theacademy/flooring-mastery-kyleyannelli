@@ -12,6 +12,7 @@ public class OrderValidator {
     public static final int MAX_BIG_DECIMAL_DIGITS = 7;
     public static final int AREA_SCALE = 2;
     public static final BigDecimal AREA_MIN_BD = GenericValidator.createBigDecimal("100.00");
+    public static final BigDecimal AREA_MAX_BD = GenericValidator.createBigDecimal("9999999.99");
     private static final String AREA_REGEX = String.format("^\\d{%d,%d}\\.\\d{%d}$", MIN_BIG_DECIMAL_DIGITS, MAX_BIG_DECIMAL_DIGITS, AREA_SCALE);
 
     // CUSTOMER NAME

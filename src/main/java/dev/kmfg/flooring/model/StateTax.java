@@ -1,18 +1,12 @@
 package dev.kmfg.flooring.model;
 
+import dev.kmfg.flooring.service.validator.GenericValidator;
+
 import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.util.Locale;
 
 public class StateTax {
-    private static final NumberFormat NICE_NUMBER_FORMATTER = NumberFormat.getNumberInstance(Locale.US);
-
     private final String stateName, stateAbbreviation;
     private final BigDecimal taxRate;
-
-    static {
-        NICE_NUMBER_FORMATTER.setMinimumFractionDigits(2);
-    }
 
     public StateTax(String stateAbbreviation, String stateName, BigDecimal taxRate) {
         this.stateAbbreviation = stateAbbreviation;
@@ -77,7 +71,7 @@ public class StateTax {
         return String.format("%s (%s) - %s%%",
                 stateName,
                 stateAbbreviation,
-                NICE_NUMBER_FORMATTER.format(taxRate)
+                GenericValidator.NICE_NUMBER_FORMATTER.format(taxRate)
         );
     }
 }

@@ -80,7 +80,14 @@ public class FlooringView {
     private BigDecimal promptArea() {
         String area = "";
         while(OrderValidator.isAreaInvalid(area)) {
-            area = io.readString("Enter the area sqft in XXX.XX format. It must be exactly to the hundredths place, 100.00 or greater.");
+            area = io.readString(
+                    String.format(
+                            "Enter the area sqft in XXX.XX format. It must be exactly to the hundredths place, in range of [%s, %s]",
+                            GenericValidator.NICE_NUMBER_FORMATTER.format(OrderValidator.AREA_MIN_BD),
+                            GenericValidator.NICE_NUMBER_FORMATTER.format(OrderValidator.AREA_MAX_BD)
+                    )
+            );
+            area = area.replace(",", "");
         }
         return GenericValidator.createBigDecimal(area);
     }

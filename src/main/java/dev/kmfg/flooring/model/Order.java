@@ -1,18 +1,13 @@
 package dev.kmfg.flooring.model;
 
+import dev.kmfg.flooring.service.validator.GenericValidator;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.NumberFormat;
 import java.time.LocalDate;
-import java.util.Locale;
 
 public class Order {
-    private static final NumberFormat NICE_NUMBER_FORMATTER = NumberFormat.getNumberInstance(Locale.US);
     private static final BigDecimal ONE_HUNDRED = new BigDecimal(100).setScale(0, RoundingMode.UNNECESSARY);
-
-    static {
-        NICE_NUMBER_FORMATTER.setMinimumFractionDigits(2);
-    }
 
     private int orderNumber;
     private LocalDate orderDate;
@@ -148,10 +143,10 @@ public class Order {
                 area != null ? area.toString() : "N/A",
                 stateTax != null ? stateTax.toString() : "N/A",
                 product != null ? product.toString() : "N/A",
-                haveAreaAndProduct ? NICE_NUMBER_FORMATTER.format(getMaterialCost()) : "N/A",
-                haveAreaAndProduct ? NICE_NUMBER_FORMATTER.format(getLaborCost()) : "N/A",
-                haveAreaProductStateTax ? NICE_NUMBER_FORMATTER.format(getTax()) : "N/A",
-                haveAreaProductStateTax ? NICE_NUMBER_FORMATTER.format(getTotal()) : "N/A"
+                haveAreaAndProduct ? GenericValidator.NICE_NUMBER_FORMATTER.format(getMaterialCost()) : "N/A",
+                haveAreaAndProduct ? GenericValidator.NICE_NUMBER_FORMATTER.format(getLaborCost()) : "N/A",
+                haveAreaProductStateTax ? GenericValidator.NICE_NUMBER_FORMATTER.format(getTax()) : "N/A",
+                haveAreaProductStateTax ? GenericValidator.NICE_NUMBER_FORMATTER.format(getTotal()) : "N/A"
         );
     }
 
