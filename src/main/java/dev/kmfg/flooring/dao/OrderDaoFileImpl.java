@@ -223,7 +223,7 @@ public class OrderDaoFileImpl implements OrderDao {
 
         out.close();
         if(numOrdersAdded.get() == 0) {
-            // the result is ignored, otherwise this would be logged
+            // the result is ignored, otherwise this would be logged if we were logging
             // I don't think this warrants an exception because it does
             // stop the program from running in a good state
             file.delete();
