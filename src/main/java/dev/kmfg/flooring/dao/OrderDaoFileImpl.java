@@ -200,6 +200,7 @@ public class OrderDaoFileImpl implements OrderDao {
         AtomicInteger numOrdersAdded = new AtomicInteger();
         try {
             // I am aware at a larger scale, or with software that may scale, this is quite poor.
+            // A 3rd party library or in depth file handling with RandomAccessFile could be better for disk writes.
             final boolean append = false;
             out = new PrintWriter(new FileWriter(file, append));
 
