@@ -24,8 +24,10 @@ public class UserIOConsoleImpl implements UserIO {
     }
 
     /**
-     * Get an int within the requested range. The minimum will overflow if Integer.MIN_VALUE is given for min.
-     * Additionally, this will not check if you give the max as the min, and min as the max.
+     * Get an int within the requested range.
+     * If the minimum is given as Integer.MIN_VALUE it will be raised by 1!
+     * If the maximum is given as Integer.MAX_VALUE it will be lowered by 1!
+     * Providing the max as the min and the min as the max will automatically get swapped.
      * @param prompt to show the user until a valid int is given.
      * @param min inclusive
      * @param max inclusive
@@ -33,6 +35,18 @@ public class UserIOConsoleImpl implements UserIO {
      */
     @Override
     public int readInt(String prompt, int min, int max) {
+        if(min > max) {
+            int t = max;
+            max = min;
+            min = t;
+        }
+        if(min == Integer.MIN_VALUE) {
+            min++;
+        }
+        if(max == Integer.MAX_VALUE) {
+            max--;
+        }
+
         int x = min - 1;
         // while x is outside the range.
         while(x < min || x > max) {
